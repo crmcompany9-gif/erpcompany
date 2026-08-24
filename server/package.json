@@ -20,5 +20,13 @@
     "mongoose": "^9.9.3",
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0"
-  }
+  },
+  "engines": {
+  "node": ">=18.0.0",
+  "npm": ">=8.0.0"
+},
+"scripts": {
+  "start": "node server.js",
+  "build": "echo 'No build needed'"
+}
 }
