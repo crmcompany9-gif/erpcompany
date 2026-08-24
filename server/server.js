@@ -10,11 +10,18 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   'http://localhost:3000',
-  process.env.CLIENT_URL
-].filter(Boolean);
+  'https://erp-frontend-6a8c.onrender.com'
+];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.log('CORS blocked:', origin);
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
