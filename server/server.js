@@ -9,12 +9,13 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://erp-b4qn.onrender.com',
-  ],
-  credentials: true,
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'user-role'],
 }));
+
+// Handle preflight
+app.options('*', cors());
 app.use(express.json());
 
 // Routes
