@@ -78,7 +78,7 @@ function ClientDetail() {
       setLoading(false);
     }
   };
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAll(); }, [id]);
 
   const handleUpdate = async () => {

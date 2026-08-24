@@ -8,7 +8,7 @@ function AddClient() {
   const navigate = useNavigate();
   
  const user = JSON.parse(localStorage.getItem('user') || '{}');
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
 useEffect(() => {
   if (user.role !== 'kam' && user.role !== 'accounts') {
     toast.error('You do not have permission to add clients');
