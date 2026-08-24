@@ -11,9 +11,12 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://erp-b4qn.onrender.com',
+    'http://localhost:5173',
+    'https://erp-b4qn.onrender.com'
   ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
