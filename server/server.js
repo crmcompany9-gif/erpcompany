@@ -17,6 +17,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://erp-b4qn.onrender.com',
   'https://erp-api-6fxu.onrender.com',
+  'https://erp-portal-nk0s.onrender.com',
 ];
 
 app.use(cors({
