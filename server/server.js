@@ -15,7 +15,8 @@ const app = express();
 // Middleware
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://erp-frontend-6a8c.onrender.com'
+  'https://erp-b4qn.onrender.com',
+  'https://erp-api-6fxu.onrender.com',
 ];
 
 app.use(cors({
