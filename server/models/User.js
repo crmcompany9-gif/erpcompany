@@ -14,12 +14,13 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    // Each employee has a role matching their department
-    enum: ['hod', 'manager', 'accounts', 'kam', 'certification', 'retention', 'poc', 'content', 'grooming', 'it', 'legal'],
-    default: 'kam',
-  },
+ role: {
+  type: String,
+enum: ['hod','manager','accounts','kam','certification','retention','poc','content','grooming','it','legal','client'],
+  default: 'kam',
+},
+// Add this field — links client user to their client record
+linkedClient: { type: mongoose.Schema.Types.ObjectId, ref: 'Client' },
   department: {
     type: String,
   },

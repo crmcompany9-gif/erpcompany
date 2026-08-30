@@ -100,5 +100,66 @@ router.get('/me', async (req, res) => {
     res.status(401).json({ message: 'Invalid token' });
   }
 });
+// GET client portal data — only their own file
+router.get('/client-portal', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (user.role !== 'client') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    if (!user.linkedClient) {
+      return res.status(404).json({ message: 'No client linked to this account' });
+    }
+
+    const Client = require('../models/Client');
+    const client = await Client.findById(user.linkedClient)
+      .populate('updates.updatedBy', 'name')
+      .populate('communications.loggedBy', 'name');
+
+    if (!client) return res.status(404).json({ message: 'Client not found' });
+
+    // Only send safe data to client
+    res.json({
+      companyName: client.companyName,
+      contactPerson: client.contactPerson,
+      scheme: client.scheme,
+      stage: client.stage,
+      slaStatus: client.slaStatus,
+      createdAt: client.createdAt,
+      addedByName: client.addedByName,
+      updates: client.updates.map(u => ({
+        department: u.department,
+        note: u.note,
+        stageChanged: u.stageChanged,
+        updatedByName: u.updatedByName,
+        fileUrl: u.fileUrl,
+        fileName: u.fileName,
+        createdAt: u.createdAt,
+      })),
+      communications: client.communications.map(c => ({
+        type: c.type,
+        note: c.note,
+        loggedByName: c.loggedByName,
+        createdAt: c.createdAt,
+      })),
+      documents: client.documents.map(d => ({
+        name: d.name,
+        type: d.type,
+        url: d.url,
+        uploadedByName: d.uploadedByName,
+        uploadedAt: d.uploadedAt,
+        status: d.status,
+      })),
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 module.exports = router;

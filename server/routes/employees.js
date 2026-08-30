@@ -7,7 +7,7 @@ const User = require('../models/User');
 // GET /api/employees
 router.get('/', async (req, res) => {
   try {
-    const employees = await User.find().select('-password').sort({ createdAt: -1 });
+   const employees = await User.find({}).select('-password').sort({ createdAt: -1 });
     res.json(employees);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -78,5 +78,44 @@ router.put('/:id/edit', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+// POST — Create client login account
+router.post('/create-client-login', async (req, res) => {
+  try {
+    const { name, email, password, clientId } = req.body;
+
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ message: 'Email already registered' });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'client',
+      department: 'Client',
+      linkedClient: clientId,
+    });
+
+    await user.save();
+    res.status(201).json({ message: '✅ Client login created', user: { id: user._id, name: user.name } });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+// Check if client login exists
+router.get('/check-client-login/:clientId', async (req, res) => {
+  try {
+    const user = await User.findOne({ 
+      linkedClient: req.params.clientId, 
+      role: 'client' 
+    });
+    res.json({ exists: !!user, email: user?.email });
+  } catch (err) {
+    res.status(500).json({ exists: false });
+  }
+});
+
 
 module.exports = router;

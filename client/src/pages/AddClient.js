@@ -8,9 +8,9 @@ function AddClient() {
   const navigate = useNavigate();
   
  const user = JSON.parse(localStorage.getItem('user') || '{}');
-// eslint-disable-next-line react-hooks/exhaustive-deps
+
 useEffect(() => {
-  if (user.role !== 'kam' && user.role !== 'accounts') {
+ if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
     toast.error('You do not have permission to add clients');
     navigate('/clients');
   }
@@ -19,7 +19,7 @@ useEffect(() => {
 
 // Redirect HOD away from this page
 useEffect(() => {
-  if (user.role === 'hod' || user.role === 'manager') {
+ if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
     toast.error('Manager cannot add clients');
     navigate('/clients');
   }

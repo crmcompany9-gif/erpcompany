@@ -22,25 +22,51 @@ router.get('/my', async (req, res) => {
     // Get only active clients first
     const activeClients = await Client.find({ isActive: true }).select('_id');
     const activeClientIds = activeClients.map(c => c._id);
+// Get client stages to filter tasks correctly
+const clientList = await Client.find({ isActive: true }).select('_id stage');
+const REJECTION_SET = new Set([
+  'Rejected - Revision','PPT Revision','Resubmission',
+  'Re-Grooming','Retention','Final Closure'
+]);
 
-    let query = {
-      isActive: true,
-      client: { $in: activeClientIds },
-    };
+// Build map of clientId → isRejectionPath
+const clientStageMap = {};
+clientList.forEach(c => {
+  clientStageMap[c._id.toString()] = REJECTION_SET.has(c.stage);
+});
+
+let query = {
+  isActive: true,
+  client: { $in: activeClientIds },
+};
 
     // HOD and Manager see all tasks
-    if (user.role !== 'hod' && user.role !== 'manager') {
-      query.$or = [
-        { assignedTo: user.id },
-        { assignedRole: user.role },
-      ];
-    }
+  if (user.role !== 'hod' && user.role !== 'manager') {
+  query.$or = [
+    { assignedTo: user.id },
+    { assignedRole: user.role, assignedTo: null },
+  ];
+}
 
-    const tasks = await Task.find(query)
-      .populate('client', 'companyName stage')
-      .populate('assignedTo', 'name')
-      .sort({ dueDate: 1 });
+   const tasks = await Task.find(query)
+  .populate('client', 'companyName stage')
+  .populate('assignedTo', 'name')
+  .sort({ dueDate: 1 });
 
+// Filter out tasks from wrong path
+const INTERVIEW_SUCCESS_STAGES = ['Interview', 'Completed'];
+const INTERVIEW_REJECTION_STAGES = [
+  'Rejected - Revision','PPT Revision','Resubmission',
+  'Re-Grooming','Retention','Final Closure'
+];
+
+const filteredTasks = tasks.filter(task => {
+  if (!task.client) return true;
+  const isRejection = clientStageMap[task.client._id?.toString()];
+  if (isRejection && INTERVIEW_SUCCESS_STAGES.includes(task.stage)) return false;
+  if (!isRejection && INTERVIEW_REJECTION_STAGES.includes(task.stage)) return false;
+  return true;
+});
     // Auto-mark overdue
     const now = new Date();
     const updated = await Promise.all(tasks.map(async (task) => {
@@ -51,7 +77,15 @@ router.get('/my', async (req, res) => {
       return task;
     }));
 
-    res.json(updated);
+    // Apply path filter
+const finalTasks = updated.filter(task => {
+  if (!task.client) return true;
+  const isRejection = clientStageMap[task.client._id?.toString()];
+  if (isRejection && INTERVIEW_SUCCESS_STAGES.includes(task.stage)) return false;
+  if (!isRejection && INTERVIEW_REJECTION_STAGES.includes(task.stage)) return false;
+  return true;
+});
+res.json(finalTasks);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -77,21 +111,38 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET tasks for a specific client
 router.get('/client/:clientId', async (req, res) => {
   try {
+    const Client = require('../models/Client');
+    const client = await Client.findById(req.params.clientId);
+    if (!client) return res.status(404).json({ message: 'Client not found' });
+
+    const REJECTION_SET = new Set([
+      'Rejected - Revision','PPT Revision','Resubmission',
+      'Re-Grooming','Retention','Final Closure'
+    ]);
+
+    const isRejectionPath = REJECTION_SET.has(client.stage);
+
+    // Success path — hide rejection stages tasks
+    // Rejection path — hide interview success tasks
+    const hiddenStages = isRejectionPath
+      ? ['Interview', 'Completed']        // hide success tasks
+      : ['Rejected - Revision', 'PPT Revision', 'Resubmission', 'Re-Grooming', 'Retention', 'Final Closure']; // hide rejection tasks
+
     const tasks = await Task.find({
       client: req.params.clientId,
       isActive: true,
+      stage: { $nin: hiddenStages },
     })
       .populate('assignedTo', 'name role')
       .sort({ dueDate: 1 });
+
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
 // GET task counts for notification badge
 router.get('/counts/pending', async (req, res) => {
   try {

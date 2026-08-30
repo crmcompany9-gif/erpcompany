@@ -10,7 +10,9 @@ import Departments from './pages/Departments';
 import SLATracker from './pages/SLATracker';
 import AddClient from './pages/AddClient';
 import Employees from './pages/Employees';
+import ClientPortal from './pages/ClientPortal';
 import Layout from './components/Layout';
+
 
 const isLoggedIn = () => !!localStorage.getItem('token');
 
@@ -24,6 +26,7 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path="/login" element={<Login />} />
+         <Route path="/my-portal" element={<ClientPortal />} />
         <Route path="/" element={
           <Protected>
             <Layout />
