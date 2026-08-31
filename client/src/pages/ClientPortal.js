@@ -39,10 +39,6 @@ const formatDateTime = (date) => {
 };
 
 const TEAM = [
-  { icon:'💰', name:'Riya',         role:'Accounts & MOU',      phone:'7742929581' },
-  { icon:'🤝', name:'Vinit',        role:'Key Account Manager', phone:'9001928431' },
-  { icon:'🏛️', name:'Lovely',       role:'Certification',       phone:'8306006560' },
-  { icon:'🎨', name:'Tanmay Pandey',role:'Content & PPT',       phone:'9799953891' },
   { icon:'📞', name:'Laxmi',        role:'Client Relations',    phone:'9119222089' },
   { icon:'🔁', name:'Ankit',        role:'Retention & Revision',phone:'9216086715' },
   { icon:'🏁', name:'Yash',         role:'Final Closure',       phone:'9001983480' },
