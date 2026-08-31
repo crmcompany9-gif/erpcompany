@@ -6,24 +6,24 @@ import API from '../api/axios';
 
 function AddClient() {
   const navigate = useNavigate();
-  
- const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-useEffect(() => {
- if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
-    toast.error('You do not have permission to add clients');
-    navigate('/clients');
-  }
-}, []);
-  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-// Redirect HOD away from this page
-useEffect(() => {
- if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
-    toast.error('Manager cannot add clients');
-    navigate('/clients');
-  }
-}, []);
+  useEffect(() => {
+    if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
+      toast.error('You do not have permission to add clients');
+      navigate('/clients');
+    }
+  }, []);
+
+
+  // Redirect HOD away from this page
+  useEffect(() => {
+    if (user.role !== 'kam' && user.role !== 'accounts' && user.role !== 'hod' && user.role !== 'manager') {
+      toast.error('Manager cannot add clients');
+      navigate('/clients');
+    }
+  }, []);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     companyName: '', contactPerson: '', phone: '', email: '',
@@ -31,31 +31,31 @@ useEffect(() => {
   });
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    await API.post('/clients', {
-      ...form,
-      addedBy: user.id,
-      addedByName: user.name,
-      createdBy: user.id,
-      userRole: user.role,
-    });
-    toast.success('✅ Client added successfully!');
-    navigate('/clients');
-  } catch (err) {
-    toast.error(err.response?.data?.message || 'Failed to add client');
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await API.post('/clients', {
+        ...form,
+        addedBy: user.id,
+        addedByName: user.name,
+        createdBy: user.id,
+        userRole: user.role,
+      });
+      toast.success('✅ Client added successfully!');
+      navigate('/clients');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to add client');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div style={{maxWidth:680}}>
-      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
+    <div style={{ maxWidth: 680 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <button className="btn btn-outline btn-sm" onClick={() => navigate('/clients')}>← Back</button>
-        <h2 style={{fontFamily:'Space Grotesk,sans-serif',fontSize:18,fontWeight:700}}>Add New Client</h2>
+        <h2 style={{ fontFamily: 'Space Grotesk,sans-serif', fontSize: 18, fontWeight: 700 }}>Add New Client</h2>
       </div>
 
       <div className="card">
@@ -84,16 +84,26 @@ const handleSubmit = async (e) => {
           <div className="form-row">
             <div className="form-group">
               <label>Scheme / Grant *</label>
-              <select name="scheme" value={form.scheme} onChange={handleChange} required>
-                <option value="">Select scheme...</option>
-                <option>Seed Funding 20L</option>
-                <option>Seed Funding 50L</option>
-                <option>Nidhi Seed Support</option>
-                <option>MSME Innovation</option>
-                <option>State Grant</option>
-                <option>DPIIT Recognition</option>
-                <option>Startup India Registration</option>
-              </select>
+              <input
+                name="scheme"
+                list="scheme-options"
+                placeholder="Type or select a scheme..."
+                value={form.scheme}
+                onChange={handleChange}
+                required
+              />
+              <datalist id="scheme-options">
+                <option value="Seed Funding 20L" />
+                <option value="Seed Funding 50L" />
+                <option value="Nidhi Seed Support" />
+                <option value="MSME Innovation" />
+                <option value="State Grant" />
+                <option value="DPIIT Recognition" />
+                <option value="Startup India Registration" />
+                <option value="Incubation Support" />
+                <option value="Export Promotion" />
+                <option value="Women Entrepreneurship" />
+              </datalist>
             </div>
             <div className="form-group">
               <label>Lead Source</label>
@@ -116,7 +126,7 @@ const handleSubmit = async (e) => {
             <label>Initial Notes</label>
             <textarea name="notes" placeholder="Source of lead, first call notes, special requirements..." value={form.notes} onChange={handleChange} />
           </div>
-          <div style={{display:'flex',gap:10,marginTop:8}}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             <button className="btn btn-primary" type="submit" disabled={loading}>
               {loading ? 'Saving...' : '✅ Save & Start Onboarding →'}
             </button>
