@@ -76,30 +76,27 @@ router.put('/:id/stage', async (req, res) => {
   try {
     const { stage, note, updatedBy, department, updatedByName, userRole } = req.body;
 
-    // Role to allowed current stages mapping
-  const roleStages = {
-  accounts:     ['Accounts & MOU'],
-  certification:['Certification'],
-  content:      ['Content & PPT', 'PPT Revision'],
-  kam:          ['File Submission'],
-poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
-  retention:    ['Re-Grooming', 'Final Closure'],
-};
+    const roleStages = {
+      accounts:     ['Accounts & MOU'],
+      certification:['Certification'],
+      content:      ['Content & PPT', 'PPT Revision'],
+      kam:          ['File Submission'],
+      poc:          ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
+      retention:    ['Re-Grooming', 'Final Closure'],
+    };
 
     const client = await Client.findById(req.params.id);
     if (!client) return res.status(404).json({ message: 'Client not found' });
 
-    // Block if employee is trying to update outside their department
-   // Skip restriction for interview decision stages — only POC handles these
-const interviewStages = ['Interview', 'Retention', 'Grooming'];
-if (userRole && roleStages[userRole] && !interviewStages.includes(client.stage)) {
-  const allowed = roleStages[userRole];
-  if (!allowed.includes(client.stage)) {
-    return res.status(403).json({
-      message: `❌ You can only update clients at your department stage. Current stage is: ${client.stage}`,
-    });
-  }
-}
+    const interviewStages = ['Interview', 'Retention', 'Grooming'];
+    if (userRole && roleStages[userRole] && !interviewStages.includes(client.stage)) {
+      const allowed = roleStages[userRole];
+      if (!allowed.includes(client.stage)) {
+        return res.status(403).json({
+          message: `❌ You can only update clients at your department stage. Current stage is: ${client.stage}`,
+        });
+      }
+    }
 
     const prevStage = client.stage;
     client.stage = stage;
@@ -118,17 +115,17 @@ if (userRole && roleStages[userRole] && !interviewStages.includes(client.stage))
 
     await client.save();
 
-    // Auto-generate tasks for new stage
     if (prevStage !== stage) {
       try {
         await generateTasksForStage(client, stage, updatedBy);
       } catch (taskErr) {
-        console.log('Task generation warning:', taskErr.message);
+        console.error('Task gen error:', taskErr.message);
       }
     }
 
     res.json({ message: '✅ Stage updated & new tasks created', client });
   } catch (err) {
+    console.error('Stage update error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
