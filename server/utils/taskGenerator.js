@@ -158,7 +158,7 @@ const STAGE_TASKS = {
     },
   ],
 
-  // ── STAGE : GROOMING — Rohit ──────────────────────
+  // ── STAGE 5: GROOMING — Rohit ──────────────────────
 'Grooming': [
   {
     title: 'Mock Interview Practice Session',

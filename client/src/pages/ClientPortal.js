@@ -7,7 +7,8 @@ const SUCCESS_STAGES = [
   { key: 'Accounts & MOU',  label: 'Accounts & MOU',       owner: 'Riya' },
   { key: 'Certification',   label: 'Certification',         owner: 'Lovely' },
   { key: 'Content & PPT',   label: 'Content & PPT',         owner: 'Tanmay Pandey' },
-  { key: 'File Submission', label: 'File Submission',       owner: 'Vinit' },
+   { key: 'File Submission', label: 'File Submission',       owner: 'Vinit' },
+  { key: 'Grooming',        label: 'Grooming',              owner: 'Rohit' },
   { key: 'Interview',       label: 'Interview Received 🎉', owner: 'Laxmi' },
   { key: 'Completed',       label: '✅ All Journey Closed', owner: '' },
 ];
