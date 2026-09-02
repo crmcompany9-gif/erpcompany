@@ -82,7 +82,7 @@ router.put('/:id/stage', async (req, res) => {
   certification:['Certification'],
   content:      ['Content & PPT', 'PPT Revision'],
   kam:          ['File Submission', 'Resubmission'],
-  poc:          ['Interview', 'Rejected - Revision', 'Resubmission', 'Re-Grooming', 'Retention'],
+poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
   retention:    ['Re-Grooming', 'Final Closure'],
 };
 
@@ -91,7 +91,7 @@ router.put('/:id/stage', async (req, res) => {
 
     // Block if employee is trying to update outside their department
    // Skip restriction for interview decision stages — only POC handles these
-const interviewStages = ['Interview', 'Retention'];
+const interviewStages = ['Interview', 'Retention', 'Grooming'];
 if (userRole && roleStages[userRole] && !interviewStages.includes(client.stage)) {
   const allowed = roleStages[userRole];
   if (!allowed.includes(client.stage)) {

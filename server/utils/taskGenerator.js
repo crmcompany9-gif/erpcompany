@@ -158,6 +158,40 @@ const STAGE_TASKS = {
     },
   ],
 
+  // ── STAGE : GROOMING — Rohit ──────────────────────
+'Grooming': [
+  {
+    title: 'Mock Interview Practice Session',
+    description: 'Conduct full mock interview with client. Practice pitch, Q&A, financials. Record weak areas.',
+    role: 'poc', assignTo: 'Rohit', department: 'POC',
+    priority: 'Urgent', hoursUntilDue: 24,
+  },
+  {
+    title: 'PPT Presentation Coaching',
+    description: 'Walk client through their PPT slide by slide. Coach on how to present each section confidently.',
+    role: 'poc', assignTo: 'Rohit', department: 'POC',
+    priority: 'High', hoursUntilDue: 36,
+  },
+  {
+    title: 'Financial Q&A Preparation',
+    description: 'Prepare client for financial questions from panel. Cover projections, funding use, ROI, market size.',
+    role: 'poc', assignTo: 'Rohit', department: 'POC',
+    priority: 'High', hoursUntilDue: 48,
+  },
+  {
+    title: 'Interview Etiquette & Confidence Building',
+    description: 'Coach client on dress code, punctuality, body language, tone, and how to handle tough questions.',
+    role: 'poc', assignTo: 'Rohit', department: 'POC',
+    priority: 'High', hoursUntilDue: 60,
+  },
+  {
+    title: 'Final Grooming Sign-Off',
+    description: 'Final check — is client ready? Confident? Knows their numbers? Give green light for interview.',
+    role: 'poc', assignTo: 'Rohit', department: 'POC',
+    priority: 'Urgent', hoursUntilDue: 72,
+  },
+],
+
   // ── STAGE 5: INTERVIEW (SUCCESS) — Laxmi ──────────────────
 'Interview': [
   {

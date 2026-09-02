@@ -5,20 +5,22 @@ import API from '../api/axios';
 import ClientLoginForm from '../components/ClientLoginForm';
 
 const SUCCESS_STAGES = [
-  { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
-  { key: 'Certification', label: 'Certification', owner: 'Lovely' },
-  { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
-  { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
-  { key: 'Interview', label: 'Interview Received 🎉', owner: 'Laxmi' },
-  { key: 'Completed', label: '✅ All Journey Closed', owner: '' },
+  { key: 'Accounts & MOU',  label: 'Accounts & MOU',        owner: 'Riya' },
+  { key: 'Certification',   label: 'Certification',          owner: 'Lovely' },
+  { key: 'Content & PPT',   label: 'Content & PPT',          owner: 'Tanmay Pandey' },
+  { key: 'File Submission', label: 'File Submission',        owner: 'Vinit' },
+  { key: 'Grooming',        label: 'Grooming',               owner: 'Rohit' },
+  { key: 'Interview',       label: 'Interview Received 🎉',  owner: 'Laxmi' },
+  { key: 'Completed',       label: '✅ All Journey Closed',  owner: '' },
 ];
 
 const REJECTION_STAGES = [
   { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
   { key: 'Certification', label: 'Certification', owner: 'Lovely' },
   { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
-  { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
-  { key: 'Rejected - Revision', label: 'Interview Rejected ❌', owner: 'Rohit' },
+   { key: 'File Submission',     label: 'File Submission',          owner: 'Vinit' },
+  { key: 'Grooming',            label: 'Grooming',                 owner: 'Rohit' },
+  { key: 'Rejected - Revision', label: 'Interview Rejected ❌',     owner: 'Rohit' },
   { key: 'PPT Revision', label: 'Re PPT & Content', owner: 'Tanmay Pandey' },
   { key: 'Resubmission', label: 'Re Submission', owner: 'Laxmi' },
   { key: 'Re-Grooming', label: 'Re Grooming', owner: 'Ankit' },
@@ -28,7 +30,7 @@ const REJECTION_STAGES = [
 
 const ALL_STAGES = [
   'Accounts & MOU', 'Certification', 'Content & PPT', 'File Submission',
-  'Interview', 'Completed', 'Rejected - Revision', 'PPT Revision',
+  'Grooming', 'Interview', 'Completed', 'Rejected - Revision', 'PPT Revision',
   'Resubmission', 'Re-Grooming', 'Retention', 'Final Closure',
 ];
 
@@ -85,7 +87,7 @@ const ROLE_STAGES = {
   certification: ['Certification'],
   content: ['Content & PPT', 'PPT Revision'],
   kam: ['File Submission'],
-  poc: ['Rejected - Revision', 'Resubmission',],
+ poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
   retention: ['Re-Grooming', 'Final Closure'],
   it: ALL_STAGES,
   hod: ALL_STAGES,
