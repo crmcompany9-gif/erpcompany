@@ -4,8 +4,9 @@ const SLA_HOURS = {
   'Accounts & MOU':     48,   // Riya — MOU + Invoice within 48 hours
   'Certification':      120,  // Lovely — 5 working days
   'Content & PPT':      72,   // Tanmay — 3 working days
-  'File Submission':    24,   // Vinit — submit within 24 hours
-  'Interview':          null, // Depends on government portal
+ 'File Submission':    24,   // Vinit — submit within 24 hours
+'Grooming':           72,   // Rohit — groom client within 3 days
+'Interview':          null, // Depends on government portal
   'Rejected - Revision': 48,  // Ankit — review within 48 hours
   'Re-Grooming':        72,   // Rohit — grooming within 3 days
   'PPT Revision':       48,   // Tanmay — revised PPT within 48 hours
