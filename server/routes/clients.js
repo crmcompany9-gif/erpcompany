@@ -81,7 +81,7 @@ router.put('/:id/stage', async (req, res) => {
   accounts:     ['Accounts & MOU'],
   certification:['Certification'],
   content:      ['Content & PPT', 'PPT Revision'],
-  kam:          ['File Submission', 'Resubmission'],
+  kam:          ['File Submission'],
 poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
   retention:    ['Re-Grooming', 'Final Closure'],
 };

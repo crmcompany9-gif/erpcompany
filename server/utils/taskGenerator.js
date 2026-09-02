@@ -438,8 +438,8 @@ if (!assignedUser) {
 
     console.log(`✅ Created ${createdTasks.length} tasks for ${client.companyName} — Stage: ${stage}`);
     return createdTasks;
-  } catch (err) {
-    console.error('Task generation error:', err.message);
+} catch (err) {
+    console.error('Task generation error FULL:', err);
     return [];
   }
 };
