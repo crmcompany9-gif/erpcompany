@@ -18,6 +18,8 @@ const allowedOrigins = [
   'https://erp-b4qn.onrender.com',
   'https://erp-api-6fxu.onrender.com',
   'https://erp-portal-nk0s.onrender.com',
+  'https://salestrack-server.onrender.com',
+  'https://salestrack-client.onrender.com',
 ];
 
 app.use(cors({

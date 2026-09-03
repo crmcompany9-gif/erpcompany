@@ -191,4 +191,53 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// POST — receive client from SalesTrack integration
+// This route is called by SalesTrack backend, not the frontend
+router.post('/from-salestrack', async (req, res) => {
+  try {
+    // Secret key check — only SalesTrack can call this
+    const secret = req.headers['x-salestrack-secret'];
+    if (secret !== process.env.SALESTRACK_SECRET) {
+      return res.status(401).json({ message: '❌ Unauthorised — invalid secret key' });
+    }
+
+    const { companyName, contactPerson, phone, city, scheme } = req.body;
+
+    // Check if client with same phone already exists
+    const existing = await Client.findOne({ phone });
+    if (existing) {
+      return res.status(409).json({ message: '⚠️ Client with this phone already exists in ERP', client: existing });
+    }
+
+    // Create client at Stage 1
+    const client = new Client({
+      companyName:   companyName || 'Unknown',
+      contactPerson: contactPerson || companyName || 'Unknown',
+      phone,
+      leadSource:    'SalesTrack',
+      scheme:        scheme || 'DPIIT Recognition',
+      stage:         'Accounts & MOU',
+      stageStartedAt: new Date(),
+      slaDeadline:   getSLADeadline('Accounts & MOU'),
+      slaStatus:     'On Track',
+      notes:         `Auto-imported from SalesTrack. City: ${city || 'N/A'}`,
+      addedByName:   'SalesTrack Integration',
+    });
+
+    await client.save();
+
+    // Generate initial tasks
+    try {
+      await generateTasksForStage(client, 'Accounts & MOU', null);
+    } catch (taskErr) {
+      console.log('Task generation warning:', taskErr.message);
+    }
+
+    res.status(201).json({ message: '✅ Client imported from SalesTrack successfully', client });
+  } catch (err) {
+    console.error('❌ SalesTrack import error:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
 module.exports = router;
