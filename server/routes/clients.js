@@ -214,7 +214,7 @@ router.post('/from-salestrack', async (req, res) => {
       companyName:   companyName || 'Unknown',
       contactPerson: contactPerson || companyName || 'Unknown',
       phone,
-      leadSource:    'SalesTrack',
+      leadSource:    'Direct Enquiry',
       scheme:        scheme || 'DPIIT Recognition',
       stage:         'Accounts & MOU',
       stageStartedAt: new Date(),
