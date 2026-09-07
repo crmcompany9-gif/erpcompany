@@ -761,3 +761,168 @@ textarea { resize: vertical; min-height: 80px; }
 .mt-2 { margin-top: 8px; }
 .mb-2 { margin-bottom: 8px; }
 .w-full { width: 100%; }
+/* ══════════════════════════════════════
+   MOBILE FIXES — topbar, client detail, tabs
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Topbar — stack into two rows on mobile */
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  /* Row 1: hamburger + welcome */
+  .topbar-title {
+    flex: 1;
+    font-size: 13px !important;
+  }
+
+  /* Row 2: right side items wrap below */
+  .topbar-right {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Hide role badge on mobile — saves space */
+  .topbar-right > span[style*="uppercase"] {
+    display: none;
+  }
+
+  /* Overdue button — smaller */
+  .topbar-right > div {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+
+  /* Add client button — full width on mobile */
+  .topbar-right .btn-primary {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* Content padding tighter */
+  .content { padding: 12px 14px 20px; }
+
+  /* Client detail page — breadcrumb */
+  .breadcrumb-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 14px;
+  }
+
+  /* Client info grid — single column */
+  .client-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Journey tabs — horizontal scroll */
+  .journey-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .journey-tabs::-webkit-scrollbar { display: none; }
+  .journey-tabs > * { flex-shrink: 0; }
+
+  /* Stage timeline — full width */
+  .stage-timeline { overflow-x: auto; }
+
+  /* SLA badge — smaller */
+  .sla-badge { font-size: 11px; padding: 3px 8px; }
+
+  /* Remove client button — smaller */
+  .remove-btn { font-size: 11px; padding: 5px 10px; }
+
+  /* Notice board form grid — single col */
+  .notice-form-grid { grid-template-columns: 1fr !important; }
+
+  /* Pipeline stage boxes — 2 col grid on mobile */
+  .pipeline-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Client table on mobile — card style */
+  .clients-table-wrap { overflow-x: auto; }
+  .clients-table-wrap table { min-width: 600px; }
+
+  /* Dashboard stats — 2 col */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Forms — single column */
+  .form-row { grid-template-columns: 1fr !important; }
+
+  /* HOD Operations button — smaller */
+  .operations-btn { font-size: 11px !important; padding: 5px 10px !important; }
+
+  /* Breadcrumb back button */
+  .back-btn { font-size: 12px; }
+
+  /* SLA breach alert — full width */
+  .sla-breach-alert { font-size: 12px; padding: 8px 12px; }
+
+  /* View only / stage badge */
+  .stage-badge { font-size: 11px; }
+}
+
+/* ══════════════════════════════════════
+   CLIENT DETAIL PAGE — mobile specific
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Main two-column layout becomes single column */
+  .grid-7-5 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Client info card — full width */
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Tabs row — scrollable, no wrap */
+  div[style*="borderBottom: '2px solid var(--border)'"],
+  div[style*='borderBottom: "2px solid var(--border)"'] {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+    gap: 0;
+  }
+
+  /* Each tab button — no shrink */
+  div[style*="borderBottom: '2px solid var(--border)'"] > div,
+  div[style*='borderBottom: "2px solid var(--border)"'] > div {
+    flex-shrink: 0;
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Top breadcrumb row */
+  div[style*="alignItems: 'center'"][style*="marginBottom: 20"] {
+    gap: 8px;
+  }
+
+  /* SLA + Remove button row */
+  div[style*="marginLeft: 'auto'"] {
+    flex-wrap: wrap;
+    margin-left: 0 !important;
+    width: 100%;
+  }
+
+  /* Stage timeline items */
+  div[style*="width: 30"][style*="borderRadius: '50%'"] {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 11px !important;
+  }
+}
