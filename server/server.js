@@ -42,7 +42,8 @@ app.use('/api/auth',      require('./routes/auth'));
 app.use('/api/clients',   require('./routes/clients'));
 app.use('/api/tasks',     require('./routes/tasks'));
 app.use('/api/employees', require('./routes/employees'));
-app.use('/api/upload', require('./routes/upload'));
+app.use('/api/upload',    require('./routes/upload'));
+app.use('/api/notices',   require('./routes/notices'));
 
 // Health check
 app.get('/', (req, res) => {

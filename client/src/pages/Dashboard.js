@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
+import NoticeBoard from '../components/NoticeBoard';
 
 // SLA status helper
 const slaBadge = (status) => {
@@ -80,6 +81,9 @@ function Dashboard() {
 
   return (
     <div>
+      {/* Notice Board */}
+      <NoticeBoard userRole={role} userName={user.name} />
+
       {/* Role Focus Banner */}
       {ROLE_FOCUS[role] && (
         <div style={{background:'var(--blue-light)',border:'1px solid #93C5FD',borderRadius:8,padding:'10px 16px',marginBottom:16,fontSize:13,color:'var(--blue)',fontWeight:500}}>
