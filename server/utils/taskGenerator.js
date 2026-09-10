@@ -135,7 +135,7 @@ const STAGE_TASKS = {
     {
       title: 'Send Google Form to Client',
       description: 'Send the required Google Form to client for filling additional information needed for portal submission.',
-      role: 'kam', department: 'KAM',
+      role: 'content', assignTo: 'Tanmay Pandey', department: 'Content',
       priority: 'High', hoursUntilDue: 8,
     },
     {
@@ -159,122 +159,122 @@ const STAGE_TASKS = {
   ],
 
   // ── STAGE 5: GROOMING — Rohit ──────────────────────
-'Grooming': [
-  {
-    title: 'Mock Interview Practice Session',
-    description: 'Conduct full mock interview with client. Practice pitch, Q&A, financials. Record weak areas.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 24,
-  },
-  {
-    title: 'PPT Presentation Coaching',
-    description: 'Walk client through their PPT slide by slide. Coach on how to present each section confidently.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'High', hoursUntilDue: 36,
-  },
-  {
-    title: 'Financial Q&A Preparation',
-    description: 'Prepare client for financial questions from panel. Cover projections, funding use, ROI, market size.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'High', hoursUntilDue: 48,
-  },
-  {
-    title: 'Interview Etiquette & Confidence Building',
-    description: 'Coach client on dress code, punctuality, body language, tone, and how to handle tough questions.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'High', hoursUntilDue: 60,
-  },
-  {
-    title: 'Final Grooming Sign-Off',
-    description: 'Final check — is client ready? Confident? Knows their numbers? Give green light for interview.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 72,
-  },
-],
+  'Grooming': [
+    {
+      title: 'Mock Interview Practice Session',
+      description: 'Conduct full mock interview with client. Practice pitch, Q&A, financials. Record weak areas.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 24,
+    },
+    {
+      title: 'PPT Presentation Coaching',
+      description: 'Walk client through their PPT slide by slide. Coach on how to present each section confidently.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'High', hoursUntilDue: 36,
+    },
+    {
+      title: 'Financial Q&A Preparation',
+      description: 'Prepare client for financial questions from panel. Cover projections, funding use, ROI, market size.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'High', hoursUntilDue: 48,
+    },
+    {
+      title: 'Interview Etiquette & Confidence Building',
+      description: 'Coach client on dress code, punctuality, body language, tone, and how to handle tough questions.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'High', hoursUntilDue: 60,
+    },
+    {
+      title: 'Final Grooming Sign-Off',
+      description: 'Final check — is client ready? Confident? Knows their numbers? Give green light for interview.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 72,
+    },
+  ],
 
   // ── STAGE 5: INTERVIEW (SUCCESS) — Laxmi ──────────────────
-'Interview': [
-  {
-    title: 'Interview Decision Required',
-    description: 'Government portal has sent interview notification. Check result and click Interview Accepted or Interview Rejected button on the client page.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 6,
-  },
-],
+  'Interview': [
+    {
+      title: 'Interview Decision Required',
+      description: 'Government portal has sent interview notification. Check result and click Interview Accepted or Interview Rejected button on the client page.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 6,
+    },
+  ],
 
   // ── STAGE 6: COMPLETED ─────────────────────────────────────
   'Completed': [
-  {
-    title: 'Tell Client Congratulations — Interview Received',
-    description: 'Call and message client immediately. Congratulate them. Tell them they received the interview mail.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 6,
-  },
-  {
-    title: 'Inform Client About Interview Date & Time',
-    description: 'Share all interview details: date, time, venue/online link, panel details, what to bring.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 12,
-  },
-  {
-    title: 'Prepare Client — Be Ready & On Time',
-    description: 'Coach client: be on time, dress professionally, be confident, review the PPT.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'High', hoursUntilDue: 24,
-  },
-  {
-    title: 'Day Before Interview — Final Reminder',
-    description: 'Call client day before. Final pep talk. Confirm they are ready.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'High', hoursUntilDue: 36,
-  },
-  {
-    title: 'Post Interview Follow-up',
-    description: 'Call client after interview. How did it go? Any feedback from panel?',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'High', hoursUntilDue: 48,
-  },
-  {
-    title: 'Collect Client Testimonial',
-    description: 'Ask happy client for written testimonial and Google/social media review.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Low', hoursUntilDue: 72,
-  },
-],
+    {
+      title: 'Tell Client Congratulations — Interview Received',
+      description: 'Call and message client immediately. Congratulate them. Tell them they received the interview mail.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 6,
+    },
+    {
+      title: 'Inform Client About Interview Date & Time',
+      description: 'Share all interview details: date, time, venue/online link, panel details, what to bring.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 12,
+    },
+    {
+      title: 'Prepare Client — Be Ready & On Time',
+      description: 'Coach client: be on time, dress professionally, be confident, review the PPT.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'High', hoursUntilDue: 24,
+    },
+    {
+      title: 'Day Before Interview — Final Reminder',
+      description: 'Call client day before. Final pep talk. Confirm they are ready.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'High', hoursUntilDue: 36,
+    },
+    {
+      title: 'Post Interview Follow-up',
+      description: 'Call client after interview. How did it go? Any feedback from panel?',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'High', hoursUntilDue: 48,
+    },
+    {
+      title: 'Collect Client Testimonial',
+      description: 'Ask happy client for written testimonial and Google/social media review.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Low', hoursUntilDue: 72,
+    },
+  ],
 
   // ── STAGE 7: INTERVIEW REJECTED — Rohit ───────────────────
-'Rejected - Revision': [
-  {
-    title: 'Identify Weak Points from Rejection',
-    description: 'Deep analysis of why interview was rejected. Document every weak point noted by the panel.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 12,
-  },
-  {
-    title: 'Send Re-Grooming Feedback Report to Client',
-    description: 'Send detailed report: what went wrong, what needs to improve, the plan.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'High', hoursUntilDue: 24,
-  },
-  {
-    title: 'Focused on Weak Areas — Action Plan',
-    description: 'Create targeted improvement plan for areas that caused rejection.',
-    role: 'poc', assignTo: 'Rohit', department: 'POC',
-    priority: 'High', hoursUntilDue: 36,
-  },
-  {
-    title: 'Update Client on Rejection — Be Empathetic',
-    description: 'Call client immediately. Be empathetic. Explain rejection reason clearly. Assure them we will fix.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 12,
-  },
-  {
-    title: 'Talk with Client — Inform Them of Next Steps',
-    description: 'Full call with client. Walk through complete plan. Keep them motivated.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'High', hoursUntilDue: 48,
-  },
-],
+  'Rejected - Revision': [
+    {
+      title: 'Identify Weak Points from Rejection',
+      description: 'Deep analysis of why interview was rejected. Document every weak point noted by the panel.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 12,
+    },
+    {
+      title: 'Send Re-Grooming Feedback Report to Client',
+      description: 'Send detailed report: what went wrong, what needs to improve, the plan.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'High', hoursUntilDue: 24,
+    },
+    {
+      title: 'Focused on Weak Areas — Action Plan',
+      description: 'Create targeted improvement plan for areas that caused rejection.',
+      role: 'poc', assignTo: 'Rohit', department: 'POC',
+      priority: 'High', hoursUntilDue: 36,
+    },
+    {
+      title: 'Update Client on Rejection — Be Empathetic',
+      description: 'Call client immediately. Be empathetic. Explain rejection reason clearly. Assure them we will fix.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 12,
+    },
+    {
+      title: 'Talk with Client — Inform Them of Next Steps',
+      description: 'Full call with client. Walk through complete plan. Keep them motivated.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'High', hoursUntilDue: 48,
+    },
+  ],
 
   // ── STAGE 8: PPT REVISION — Tanmay ────────────────────────
   'PPT Revision': [
@@ -305,92 +305,92 @@ const STAGE_TASKS = {
   ],
 
   // ── STAGE 9: RESUBMISSION — Laxmi ─────────────────────────
-'Resubmission': [
-  {
-    title: 'Tell Client We Are Resubmitting Their File',
-    description: 'Call and message client. Tell them we fixed everything and resubmitting.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 6,
-  },
-  {
-    title: 'Check All Work is Complete Before Resubmission',
-    description: 'Verify all rejection points fixed, PPT revised, client approved.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 8,
-  },
-  {
-    title: 'Get Final Approvals',
-    description: 'Get final approvals from all departments and client before resubmit.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'High', hoursUntilDue: 10,
-  },
-],
+  'Resubmission': [
+    {
+      title: 'Tell Client We Are Resubmitting Their File',
+      description: 'Call and message client. Tell them we fixed everything and resubmitting.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 6,
+    },
+    {
+      title: 'Check All Work is Complete Before Resubmission',
+      description: 'Verify all rejection points fixed, PPT revised, client approved.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 8,
+    },
+    {
+      title: 'Get Final Approvals',
+      description: 'Get final approvals from all departments and client before resubmit.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'High', hoursUntilDue: 10,
+    },
+  ],
 
   // ── STAGE 10: RE-GROOMING — Ankit + Rohit ─────────────────
- 'Re-Grooming': [
-  {
-    title: 'Check Mistakes from Previous Grooming',
-    description: 'Review what went wrong. Identify specific mistakes and weak areas.',
-    role: 'retention', assignTo: 'Ankit', department: 'Retention',
-    priority: 'Urgent', hoursUntilDue: 24,
-  },
-  {
-    title: 'Tell Client We Will Work Again — Keep Motivated',
-    description: 'Call client. Keep them positive and motivated. Explain the new plan.',
-    role: 'retention', assignTo: 'Ankit', department: 'Retention',
-    priority: 'Urgent', hoursUntilDue: 24,
-  },
-  {
-    title: 'Re-Grooming Session with Client',
-    description: 'Full intensive re-grooming session. Focus on weak areas. Mock interviews.',
-    role: 'retention', assignTo: 'Ankit', department: 'Retention',
-    priority: 'High', hoursUntilDue: 48,
-  },
-],
+  'Re-Grooming': [
+    {
+      title: 'Check Mistakes from Previous Grooming',
+      description: 'Review what went wrong. Identify specific mistakes and weak areas.',
+      role: 'retention', assignTo: 'Ankit', department: 'Retention',
+      priority: 'Urgent', hoursUntilDue: 24,
+    },
+    {
+      title: 'Tell Client We Will Work Again — Keep Motivated',
+      description: 'Call client. Keep them positive and motivated. Explain the new plan.',
+      role: 'retention', assignTo: 'Ankit', department: 'Retention',
+      priority: 'Urgent', hoursUntilDue: 24,
+    },
+    {
+      title: 'Re-Grooming Session with Client',
+      description: 'Full intensive re-grooming session. Focus on weak areas. Mock interviews.',
+      role: 'retention', assignTo: 'Ankit', department: 'Retention',
+      priority: 'High', hoursUntilDue: 48,
+    },
+  ],
 
   // ── STAGE 11: RETENTION — (Interview received after resubmission)
- 'Retention': [
-  {
-    title: '2nd Interview Decision Required',
-    description: 'Government portal has sent 2nd interview notification. Check result and click Interview Accepted or Interview Rejected on the client page.',
-    role: 'poc', assignTo: 'Laxmi', department: 'POC',
-    priority: 'Urgent', hoursUntilDue: 6,
-  },
-],
+  'Retention': [
+    {
+      title: '2nd Interview Decision Required',
+      description: 'Government portal has sent 2nd interview notification. Check result and click Interview Accepted or Interview Rejected on the client page.',
+      role: 'poc', assignTo: 'Laxmi', department: 'POC',
+      priority: 'Urgent', hoursUntilDue: 6,
+    },
+  ],
 
   // ── STAGE 12: FINAL CLOSURE — Yash ────────────────────────
- 'Final Closure': [
-  {
-    title: 'Final Talk with Client — Work Complete',
-    description: 'Final professional call with client. Review everything done. Be respectful and kind.',
-    role: 'retention', assignTo: 'Yash', department: 'Retention',
-    priority: 'Urgent', hoursUntilDue: 24,
-  },
-  {
-    title: 'Resolve Client Problems — Final Attempt',
-    description: 'Make one last genuine attempt to resolve client concerns before closing.',
-    role: 'retention', assignTo: 'Yash', department: 'Retention',
-    priority: 'High', hoursUntilDue: 36,
-  },
-  {
-    title: 'Inform Client — Maximum 2 Interviews Completed',
-    description: 'Explain that we completed both interview attempts as per agreement. Work is complete.',
-    role: 'retention', assignTo: 'Yash', department: 'Retention',
-    priority: 'High', hoursUntilDue: 48,
-  },
-  {
-    title: 'Send Official Closure Communication',
-    description: 'Send formal closure via email and WhatsApp. Summary of all work done.',
-    role: 'retention', assignTo: 'Yash', department: 'Retention',
-    priority: 'High', hoursUntilDue: 48,
-  },
-  {
-    title: 'Final File Archive — Case Closed',
-    description: 'Archive complete client file. Document closure reason. Mark case as finally closed.',
-    role: 'retention', assignTo: 'Yash', department: 'Retention',
-    priority: 'Medium', hoursUntilDue: 72,
-  },
-],
+  'Final Closure': [
+    {
+      title: 'Final Talk with Client — Work Complete',
+      description: 'Final professional call with client. Review everything done. Be respectful and kind.',
+      role: 'retention', assignTo: 'Yash', department: 'Retention',
+      priority: 'Urgent', hoursUntilDue: 24,
+    },
+    {
+      title: 'Resolve Client Problems — Final Attempt',
+      description: 'Make one last genuine attempt to resolve client concerns before closing.',
+      role: 'retention', assignTo: 'Yash', department: 'Retention',
+      priority: 'High', hoursUntilDue: 36,
+    },
+    {
+      title: 'Inform Client — Maximum 2 Interviews Completed',
+      description: 'Explain that we completed both interview attempts as per agreement. Work is complete.',
+      role: 'retention', assignTo: 'Yash', department: 'Retention',
+      priority: 'High', hoursUntilDue: 48,
+    },
+    {
+      title: 'Send Official Closure Communication',
+      description: 'Send formal closure via email and WhatsApp. Summary of all work done.',
+      role: 'retention', assignTo: 'Yash', department: 'Retention',
+      priority: 'High', hoursUntilDue: 48,
+    },
+    {
+      title: 'Final File Archive — Case Closed',
+      description: 'Archive complete client file. Document closure reason. Mark case as finally closed.',
+      role: 'retention', assignTo: 'Yash', department: 'Retention',
+      priority: 'Medium', hoursUntilDue: 72,
+    },
+  ],
 
 };
 
@@ -403,16 +403,16 @@ const generateTasksForStage = async (client, stage, createdBy) => {
 
     for (const template of templates) {
       let assignedUser;
-if (template.assignTo) {
-  // Assign to specific person by name
-  assignedUser = await User.findOne({ 
-    name: { $regex: template.assignTo, $options: 'i' }, 
-    isActive: true 
-  });
-}
-if (!assignedUser) {
-  assignedUser = await User.findOne({ role: template.role, isActive: true });
-}
+      if (template.assignTo) {
+        // Assign to specific person by name
+        assignedUser = await User.findOne({
+          name: { $regex: template.assignTo, $options: 'i' },
+          isActive: true
+        });
+      }
+      if (!assignedUser) {
+        assignedUser = await User.findOne({ role: template.role, isActive: true });
+      }
 
       const dueDate = new Date();
       dueDate.setHours(dueDate.getHours() + template.hoursUntilDue);
@@ -438,7 +438,7 @@ if (!assignedUser) {
 
     console.log(`✅ Created ${createdTasks.length} tasks for ${client.companyName} — Stage: ${stage}`);
     return createdTasks;
-} catch (err) {
+  } catch (err) {
     console.error('Task generation error FULL:', err);
     return [];
   }
