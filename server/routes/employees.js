@@ -63,21 +63,23 @@ router.put('/:id/reset-password', async (req, res) => {
   }
 });
 
-// PUT edit employee details
 router.put('/:id/edit', async (req, res) => {
   try {
-    const { name, role, department } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { name, role, department },
-      { new: true }
-    ).select('-password');
-    if (!user) return res.status(404).json({ message: 'Employee not found' });
-    res.json({ message: '✅ Employee updated', user });
+    const { name, role, department, specialty, isActive } = req.body;
+    await User.findByIdAndUpdate(req.params.id, {
+      name, role, department,
+      specialty: specialty || null,
+      ...(isActive !== undefined && { isActive }),
+    });
+    res.json({ message: '✅ Employee updated' });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
+// POST — Create client login account
+
+
 // POST — Create client login account
 router.post('/create-client-login', async (req, res) => {
   try {

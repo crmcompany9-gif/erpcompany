@@ -89,25 +89,46 @@ function Employees() {
     }
   };
 
-  const openEditModal = (emp) => {
-    setEditEmployee(emp);
-    setEditForm({ name: emp.name, role: emp.role, department: emp.department || 'Client' });
-    setShowEditModal(true);
-  };
+ const openEditModal = (emp) => {
+  setEditEmployee(emp);
+  setEditForm({ 
+    name: emp.name, 
+    role: emp.role, 
+    department: emp.department || 'Client',
+    specialty: emp.specialty || '',
+    newPassword: '',
+    isActive: emp.isActive,
+  });
+  setShowEditModal(true);
+};
 
-  const handleEdit = async () => {
-    setEditing(true);
-    try {
-      await API.put(`/employees/${editEmployee._id}/edit`, editForm);
-      toast.success(`✅ ${editEmployee.name} updated!`);
-      setShowEditModal(false);
-      fetchEmployees();
-    } catch {
-      toast.error('Failed to update');
-    } finally {
-      setEditing(false);
+ const handleEdit = async () => {
+  setEditing(true);
+  try {
+    await API.put(`/employees/${editEmployee._id}/edit`, {
+      name: editForm.name,
+      role: editForm.role,
+      department: editForm.department,
+      specialty: editForm.specialty,
+      isActive: editForm.isActive,
+    });
+
+    // Reset password if filled
+    if (editForm.newPassword && editForm.newPassword.length >= 6) {
+      await API.put(`/employees/${editEmployee._id}/reset-password`, {
+        newPassword: editForm.newPassword,
+      });
     }
-  };
+
+    toast.success(`✅ ${editEmployee.name} updated!`);
+    setShowEditModal(false);
+    fetchEmployees();
+  } catch {
+    toast.error('Failed to update');
+  } finally {
+    setEditing(false);
+  }
+};
 
   const roleColor = (role) => {
     const map = { hod:'badge-red', manager:'badge-orange', accounts:'badge-blue', kam:'badge-green', certification:'badge-gold', retention:'badge-blue', poc:'badge-gray', content:'badge-gold', grooming:'badge-gray', it:'badge-blue', legal:'badge-red', client:'badge-green' };
@@ -128,20 +149,13 @@ function Employees() {
     );
   }
 
-  const ActionButtons = ({ emp }) => (
-    emp._id === user.id
-      ? <span style={{fontSize:11,color:'var(--muted)'}}>You</span>
-      : <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-          <button className="btn btn-outline btn-sm" onClick={() => openEditModal(emp)}>✏️ Edit</button>
-          <button className="btn btn-outline btn-sm" onClick={() => openResetModal(emp)}>🔑 Password</button>
-          <button
-            className={`btn btn-sm ${emp.isActive ? 'btn-danger' : 'btn-primary'}`}
-            onClick={() => handleToggle(emp._id, emp.name, emp.isActive)}
-          >
-            {emp.isActive ? '🔒 Deactivate' : '✅ Activate'}
-          </button>
-        </div>
-  );
+ const ActionButtons = ({ emp }) => (
+  emp._id === user.id
+    ? <span style={{fontSize:11,color:'var(--muted)'}}>You</span>
+    : <button className="btn btn-outline btn-sm" onClick={() => openEditModal(emp)}>
+        ✏️ Edit
+      </button>
+);
 
   const TableHead = () => (
     <thead>
@@ -310,41 +324,108 @@ function Employees() {
 
       {/* ── EDIT MODAL ── */}
       {showEditModal && editEmployee && (
-        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.5)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'var(--white)',borderRadius:12,padding:28,width:440,boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
-            <div style={{fontFamily:'Space Grotesk,sans-serif',fontSize:16,fontWeight:700,marginBottom:6}}>
-              ✏️ Edit {editEmployee.role === 'client' ? 'Client Account' : 'Employee'}
-            </div>
-            <div style={{fontSize:13,color:'var(--muted)',marginBottom:20}}>Editing <strong>{editEmployee.name}</strong></div>
-            <div className="form-group">
-              <label>Full Name</label>
-              <input value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} placeholder="Full name" />
-            </div>
-            {editEmployee.role !== 'client' && (
-              <>
-                <div className="form-group">
-                  <label>Role</label>
-                  <select value={editForm.role} onChange={e => setEditForm({...editForm, role: e.target.value})}>
-                    {ROLES.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Department</label>
-                  <select value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
-                    {DEPARTMENTS.map(d => <option key={d}>{d}</option>)}
-                  </select>
-                </div>
-              </>
-            )}
-            <div style={{display:'flex',gap:10,marginTop:16}}>
-              <button className="btn btn-primary" style={{flex:1}} onClick={handleEdit} disabled={editing}>
-                {editing ? 'Saving...' : '💾 Save Changes'}
-              </button>
-              <button className="btn btn-outline" onClick={() => setShowEditModal(false)}>Cancel</button>
-            </div>
+  <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.5)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}}>
+    <div style={{background:'var(--white)',borderRadius:16,padding:28,width:440,boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+      
+      {/* Header */}
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
+        <div style={{width:42,height:42,borderRadius:'50%',background:'var(--blue)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:14}}>
+          {editEmployee.name?.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <div style={{fontFamily:'Space Grotesk,sans-serif',fontSize:16,fontWeight:700}}>
+            Edit {editEmployee.role === 'client' ? 'Client Account' : 'Employee'}
+          </div>
+          <div style={{fontSize:12,color:'var(--muted)'}}>{editEmployee.email}</div>
+        </div>
+      </div>
+
+      {/* Name */}
+      <div className="form-group">
+        <label>Full Name</label>
+        <input 
+          value={editForm.name} 
+          onChange={e => setEditForm({...editForm, name: e.target.value})} 
+          placeholder="Full name" 
+        />
+      </div>
+
+      {/* Role + Department — hide for clients */}
+      {editEmployee.role !== 'client' && (
+        <>
+          <div className="form-group">
+            <label>Role</label>
+            <select value={editForm.role} onChange={e => setEditForm({...editForm, role: e.target.value})}>
+              {ROLES.map(r => <option key={r} value={r}>{r.toUpperCase()}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Department</label>
+            <select value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
+              {DEPARTMENTS.map(d => <option key={d}>{d}</option>)}
+            </select>
+          </div>
+        </>
+      )}
+
+      {/* New Password */}
+      <div className="form-group">
+        <label>New Password <span style={{fontSize:10,color:'var(--muted)',fontWeight:400}}>(leave empty to keep current)</span></label>
+        <input 
+          type="password"
+          placeholder="Min 6 characters" 
+          value={editForm.newPassword || ''}
+          onChange={e => setEditForm({...editForm, newPassword: e.target.value})} 
+        />
+      </div>
+
+      {/* Active / Inactive Toggle */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'12px 14px',background:'var(--surface)',borderRadius:8,marginBottom:16}}>
+        <div>
+          <div style={{fontSize:13,fontWeight:600}}>Account Status</div>
+          <div style={{fontSize:11,color:'var(--muted)',marginTop:2}}>
+            {editForm.isActive ? 'Employee can login' : 'Employee cannot login'}
           </div>
         </div>
-      )}
+        <button
+          onClick={() => setEditForm({...editForm, isActive: !editForm.isActive})}
+          style={{
+            padding:'6px 16px',
+            borderRadius:20,
+            border:'none',
+            fontWeight:600,
+            fontSize:12,
+            cursor:'pointer',
+            fontFamily:'inherit',
+            background: editForm.isActive ? '#FEE2E2' : '#D1FAE5',
+            color: editForm.isActive ? '#DC2626' : '#065F46',
+          }}
+        >
+          {editForm.isActive ? '🔒 Deactivate' : '✅ Activate'}
+        </button>
+      </div>
+
+      {/* Buttons */}
+      <div style={{display:'flex',gap:10}}>
+        <button 
+          className="btn btn-primary" 
+          style={{flex:1}} 
+          onClick={handleEdit} 
+          disabled={editing}
+        >
+          {editing ? 'Saving...' : '💾 Save Changes'}
+        </button>
+        <button 
+          className="btn btn-outline" 
+          onClick={() => setShowEditModal(false)}
+        >
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
     </div>
   );
 }
