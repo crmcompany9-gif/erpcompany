@@ -1,18 +1,5 @@
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-  host: '74.125.133.108', // Gmail SMTP IPv4 direct
-  port: 587,
-  secure: false,
-  family: 4,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const COMPANY = 'Elbow Grease Business Solutions Pvt. Ltd.';
 const SUPPORT = 'elbowgreasecrm42@gmail.com';
@@ -481,8 +468,8 @@ const sendEmail = async (to, template) => {
     return;
   }
   try {
-    await transporter.sendMail({
-      from: `"Elbow Grease Business Solutions" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: 'Elbow Grease <onboarding@resend.dev>',
       to,
       subject: template.subject,
       html: template.html,
@@ -490,7 +477,6 @@ const sendEmail = async (to, template) => {
     console.log(`✅ Email sent to ${to}`);
   } catch (err) {
     console.error('❌ Email error:', err.message);
-    // Don't throw — email failure should not break the main flow
   }
 };
 
