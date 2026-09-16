@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const dns = require("node:dns");
 
 dns.setServers([
@@ -11,6 +13,27 @@ dns.setServers([
 dotenv.config();
 
 const app = express();
+
+// ── SECURITY ─────────────────────────────────────
+
+// Helmet — sets secure HTTP headers
+app.use(helmet());
+
+// Rate limit — max 100 requests per 15 mins per IP
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { message: '❌ Too many requests. Try again in 15 minutes.' }
+});
+app.use(globalLimiter);
+
+// Login rate limit — max 10 attempts per 15 mins per IP
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { message: '❌ Too many login attempts. Try again in 15 minutes.' }
+});
+app.use('/api/auth/login', loginLimiter);
 
 // Middleware
 const allowedOrigins = [
@@ -62,3 +85,11 @@ mongoose
   .catch((err) => {
     console.log('❌ MongoDB connection error:', err.message);
   });
+
+  // Keep alive — prevents Render free tier from sleeping
+const https = require('https');
+setInterval(() => {
+  https.get('https://erpcompany.onrender.com/', () => {
+    console.log('✅ Keep alive ping');
+  }).on('error', () => {});
+}, 14 * 60 * 1000);
