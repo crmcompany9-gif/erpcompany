@@ -13,6 +13,7 @@ dns.setServers([
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // ── SECURITY ─────────────────────────────────────
 
