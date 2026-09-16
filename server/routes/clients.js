@@ -4,6 +4,7 @@ const Client = require('../models/Client');
 const Task = require('../models/Task');
 const { getSLADeadline, getSLAStatus } = require('../utils/slaHelper');
 const { generateTasksForStage } = require('../utils/taskGenerator');
+const { sendEmail, emailTemplates } = require('../utils/emailService');
 
 // GET all clients
 router.get('/', async (req, res) => {
@@ -56,6 +57,9 @@ router.post('/', async (req, res) => {
     client.slaDeadline = getSLADeadline('Accounts & MOU');
     client.slaStatus = 'On Track';
     await client.save();
+    await client.save();
+// Send welcome email
+sendEmail(client.email, emailTemplates.clientRegistered(client));
 
     // Try to generate tasks but don't fail if it errors
     try {
@@ -114,6 +118,21 @@ router.put('/:id/stage', async (req, res) => {
     });
 
     await client.save();
+
+    await client.save();
+
+// Send emails based on stage
+if (prevStage !== stage) {
+  if (stage === 'File Submission') {
+    sendEmail(client.email, emailTemplates.fileSubmitted(client));
+  } else if (stage === 'Completed') {
+    sendEmail(client.email, emailTemplates.interviewReceived(client));
+  } else if (stage === 'Rejected - Revision') {
+    sendEmail(client.email, emailTemplates.interviewRejected(client));
+  } else if (stage === 'Final Closure') {
+    sendEmail(client.email, emailTemplates.finalClosure(client));
+  }
+}
 
     if (prevStage !== stage) {
       try {
