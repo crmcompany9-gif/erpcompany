@@ -17,7 +17,29 @@ const app = express();
 // ── SECURITY ─────────────────────────────────────
 
 // Helmet — sets secure HTTP headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+      connectSrc: ["'self'", "https://erpcompany.onrender.com"],
+    },
+  },
+  xFrameOptions: { action: 'SAMEORIGIN' },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  permittedCrossDomainPolicies: false,
+}));
+
+// Permissions Policy
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 
+    'camera=(), microphone=(), geolocation=(), payment=()'
+  );
+  next();
+});
 
 // Rate limit — max 100 requests per 15 mins per IP
 const globalLimiter = rateLimit({
@@ -55,6 +77,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(express.json());
 
 // Routes
