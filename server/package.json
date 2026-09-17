@@ -12,7 +12,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@getbrevo/brevo": "^6.0.3",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^1.41.3",
     "cors": "^2.8.6",
@@ -25,7 +24,8 @@
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^10.0.10",
-    "resend": "^6.28.1"
+    "resend": "^6.28.1",
+    "sib-api-v3-sdk": "^8.5.0"
   },
   "engines": {
     "node": ">=18.0.0",
