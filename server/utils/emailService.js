@@ -1,7 +1,5 @@
-const Brevo = require('@getbrevo/brevo');
-const brevoClient = Brevo.ApiClient.instance;
-brevoClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-const transactionalEmailsApi = new Brevo.TransactionalEmailsApi();
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const COMPANY = 'Elbow Grease Business Solutions Pvt. Ltd.';
 const SUPPORT = 'crmcompany9@gmail.com';
@@ -470,16 +468,12 @@ const sendEmail = async (to, template) => {
     return;
   }
   try {
-    const sendSmtpEmail = new Brevo.SendSmtpEmail();
-    sendSmtpEmail.sender = { 
-      name: 'Elbow Grease Business Solutions', 
-      email: process.env.EMAIL_FROM 
-    };
-    sendSmtpEmail.to = [{ email: to }];
-    sendSmtpEmail.subject = template.subject;
-    sendSmtpEmail.htmlContent = template.html;
-
-    await transactionalEmailsApi.sendTransacEmail(sendSmtpEmail);
+    await resend.emails.send({
+      from: 'Elbow Grease Business Solutions <noreply@elbowgrease.in>',
+      to,
+      subject: template.subject,
+      html: template.html,
+    });
     console.log(`✅ Email sent to ${to}`);
   } catch (err) {
     console.error('❌ Email error:', err.message);
