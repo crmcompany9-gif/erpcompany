@@ -1,6 +1,7 @@
 const SibApiV3Sdk = require('sib-api-v3-sdk');
 const defaultClient = SibApiV3Sdk.ApiClient.instance;
 defaultClient.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+console.log('Brevo API Key loaded:', process.env.BREVO_API_KEY ? '✅ Found' : '❌ Missing');
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 const COMPANY = 'Elbow Grease Business Solutions Pvt. Ltd.';
