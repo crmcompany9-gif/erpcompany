@@ -5,22 +5,22 @@ import API from '../api/axios';
 import ClientLoginForm from '../components/ClientLoginForm';
 
 const SUCCESS_STAGES = [
-  { key: 'Accounts & MOU',  label: 'Accounts & MOU',        owner: 'Riya' },
-  { key: 'Certification',   label: 'Certification',          owner: 'Lovely' },
-  { key: 'Content & PPT',   label: 'Content & PPT',          owner: 'Tanmay Pandey' },
-  { key: 'File Submission', label: 'File Submission',        owner: 'Vinit' },
-  { key: 'Grooming',        label: 'Grooming',               owner: 'Rohit' },
-  { key: 'Interview',       label: 'Interview Received 🎉',  owner: 'Laxmi' },
-  { key: 'Completed',       label: '✅ All Journey Closed',  owner: '' },
+  { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
+  { key: 'Certification', label: 'Certification', owner: 'Lovely' },
+  { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
+  { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
+  { key: 'Grooming', label: 'Grooming', owner: 'Rohit' },
+  { key: 'Interview', label: 'Interview Received 🎉', owner: 'Laxmi' },
+  { key: 'Completed', label: '✅ All Journey Closed', owner: '' },
 ];
 
 const REJECTION_STAGES = [
   { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
   { key: 'Certification', label: 'Certification', owner: 'Lovely' },
   { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
-   { key: 'File Submission',     label: 'File Submission',          owner: 'Vinit' },
-  { key: 'Grooming',            label: 'Grooming',                 owner: 'Rohit' },
-  { key: 'Rejected - Revision', label: 'Interview Rejected ❌',     owner: 'Rohit' },
+  { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
+  { key: 'Grooming', label: 'Grooming', owner: 'Rohit' },
+  { key: 'Rejected - Revision', label: 'Interview Rejected ❌', owner: 'Rohit' },
   { key: 'PPT Revision', label: 'Re PPT & Content', owner: 'Tanmay Pandey' },
   { key: 'Resubmission', label: 'Re Submission', owner: 'Laxmi' },
   { key: 'Re-Grooming', label: 'Re Grooming', owner: 'Ankit' },
@@ -87,7 +87,7 @@ const ROLE_STAGES = {
   certification: ['Certification'],
   content: ['Content & PPT', 'PPT Revision'],
   kam: ['File Submission'],
- poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
+  poc: ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
   retention: ['Re-Grooming', 'Final Closure'],
   it: ALL_STAGES,
   hod: ALL_STAGES,
@@ -112,6 +112,8 @@ function ClientDetail() {
   const [dept, setDept] = useState(getDeptFromRole(user.role));
   const DEPT_OPTIONS = ALL_DEPT_OPTIONS.filter(d => d.roles.includes(user.role));
   const myAllowedStages = ROLE_STAGES[user.role] || ALL_STAGES;
+  const [aiSummary, setAiSummary] = useState('');
+const [aiLoading, setAiLoading] = useState(false);
 
   const fetchAll = async () => {
     try {
@@ -211,6 +213,20 @@ function ClientDetail() {
   const canHandleInterview = ['poc', 'hod', 'manager'].includes(user.role);
   const showFirstInterviewButtons = client.stage === 'Interview' && canHandleInterview;
   const showSecondInterviewButtons = client.stage === 'Retention' && canHandleInterview;
+
+  const handleAISummary = async () => {
+  setAiLoading(true);
+  setAiSummary('');
+  try {
+    const res = await API.post(`/clients/${id}/ai-summary`);
+    setAiSummary(res.data.summary);
+  } catch {
+    toast.error('AI summary failed — check API key');
+  } finally {
+    setAiLoading(false);
+  }
+};
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -233,6 +249,38 @@ function ClientDetail() {
         <div>
           <div className="card">
             <div className="card-title">Client Information</div>
+            {/* AI Summary */}
+{isHOD && (
+  <div style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+      <div style={{fontSize:12,fontWeight:600,color:'var(--muted)'}}>
+        🤖 AI Client Summary
+      </div>
+      <button
+        onClick={handleAISummary}
+        disabled={aiLoading}
+        className="btn btn-sm btn-outline"
+        style={{fontSize:11}}
+      >
+        {aiLoading ? '⏳ Analyzing...' : '✨ Generate Summary'}
+      </button>
+    </div>
+    {aiSummary && (
+      <div style={{
+        marginTop:10,padding:'12px 14px',
+        background:'linear-gradient(135deg,#EFF6FF,#F5F3FF)',
+        border:'1px solid #C4B5FD',
+        borderRadius:8,fontSize:13,
+        color:'var(--text)',lineHeight:1.7,
+      }}>
+        <div style={{fontSize:10,fontWeight:700,color:'#7C3AED',marginBottom:6,textTransform:'uppercase',letterSpacing:'.06em'}}>
+          🤖 AI Analysis
+        </div>
+        {aiSummary}
+      </div>
+    )}
+  </div>
+)}
             <div className="grid-2" style={{ gap: 12 }}>
               {[['Company', client.companyName], ['Contact', client.contactPerson], ['Phone', client.phone], ['Email', client.email || '—'], ['Scheme', client.scheme], ['Lead Source', client.leadSource]].map(([k, v]) => (
                 <div key={k}>
@@ -263,9 +311,9 @@ function ClientDetail() {
                 const isDone = i < currentStageIndex;
                 const isActive = i === currentStageIndex;
                 // Show who completed THIS stage — find update that moved FROM this stage
-const stageUpdate = client.updates?.find(u => 
-  u.stageChanged && u.stageChanged.startsWith(`${stage.key} →`)
-);
+                const stageUpdate = client.updates?.find(u =>
+                  u.stageChanged && u.stageChanged.startsWith(`${stage.key} →`)
+                );
                 return (
                   <div key={stage.key} style={{ display: 'flex', gap: 16, padding: '14px 0', borderBottom: i < STAGES.length - 1 ? '1px solid var(--border)' : 'none' }}>
                     <div style={{ width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0, background: isDone ? 'var(--green)' : isActive ? 'var(--blue)' : 'var(--border)', color: isDone || isActive ? '#fff' : 'var(--muted)' }}>
