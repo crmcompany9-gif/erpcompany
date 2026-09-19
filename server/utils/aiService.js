@@ -37,7 +37,7 @@ COMMUNICATIONS: ${clientData.communications?.length || 0} logged
 
 Write a concise, professional summary in 3-4 sentences. Mention the current stage, what work has been done recently, any urgent issues (overdue tasks or SLA breach), and what should happen next. Write as a paragraph — no bullet points.`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();
