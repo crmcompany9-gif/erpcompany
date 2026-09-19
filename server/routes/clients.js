@@ -5,6 +5,7 @@ const Task = require('../models/Task');
 const { getSLADeadline, getSLAStatus } = require('../utils/slaHelper');
 const { generateTasksForStage } = require('../utils/taskGenerator');
 const { sendEmail, emailTemplates } = require('../utils/emailService');
+const { generateClientSummary } = require('../utils/aiService');
 
 // GET all clients
 router.get('/', async (req, res) => {
@@ -255,6 +256,24 @@ router.post('/from-salestrack', async (req, res) => {
     res.status(201).json({ message: '✅ Client imported from SalesTrack successfully', client });
   } catch (err) {
     console.error('❌ SalesTrack import error:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// POST — AI Summary
+router.post('/:id/ai-summary', async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.id);
+    if (!client) return res.status(404).json({ message: 'Client not found' });
+
+    const Task = require('../models/Task');
+    const tasks = await Task.find({ client: req.params.id, isActive: true });
+
+    const summary = await generateClientSummary(client, tasks);
+    if (!summary) return res.status(500).json({ message: 'AI summary failed' });
+
+    res.json({ summary });
+  } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });

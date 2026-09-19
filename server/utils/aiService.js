@@ -1,0 +1,51 @@
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const generateClientSummary = async (clientData, tasks) => {
+  try {
+    const pendingTasks = tasks.filter(t => t.status !== 'Done');
+    const overdueTasks = tasks.filter(t => t.status === 'Overdue');
+    const doneTasks = tasks.filter(t => t.status === 'Done');
+
+    const recentUpdates = clientData.updates
+      ?.slice(-5)
+      .map(u => `- ${u.department} (${u.updatedByName || 'Unknown'}): ${u.note} [${new Date(u.createdAt).toLocaleDateString('en-IN')}]`)
+      .join('\n') || 'No updates yet';
+
+    const prompt = `You are an AI assistant for Elbow Grease Business Solutions, a business consulting firm that helps startups get government funding.
+
+Analyze this client file and give a smart, professional 3-4 sentence summary for the Manager. Focus on: current status, recent activity, any risks or issues, and what needs attention next.
+
+CLIENT DETAILS:
+- Company: ${clientData.companyName}
+- Contact: ${clientData.contactPerson}
+- Scheme: ${clientData.scheme}
+- Current Stage: ${clientData.stage}
+- SLA Status: ${clientData.slaStatus}
+- Added On: ${new Date(clientData.createdAt).toLocaleDateString('en-IN')}
+
+TASK STATUS:
+- Pending Tasks: ${pendingTasks.length}
+- Overdue Tasks: ${overdueTasks.length}
+- Completed Tasks: ${doneTasks.length}
+
+RECENT UPDATES (last 5):
+${recentUpdates}
+
+COMMUNICATIONS: ${clientData.communications?.length || 0} logged
+
+Write a concise, professional summary in 3-4 sentences. Mention the current stage, what work has been done recently, any urgent issues (overdue tasks or SLA breach), and what should happen next. Write as a paragraph — no bullet points.`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
+
+  } catch (err) {
+    console.error('AI Summary error:', err.message);
+    return null;
+  }
+};
+
+module.exports = { generateClientSummary };
