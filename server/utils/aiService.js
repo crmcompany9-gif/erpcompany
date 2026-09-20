@@ -76,4 +76,45 @@ Write only the note — no extra text, no labels, no quotes.`;
   }
 };
 
-module.exports = { generateClientSummary, generateProfessionalNote };
+const generateWeeklyReport = async (clients, tasks) => {
+  try {
+    const summary = clients.map(c => {
+      const clientTasks = tasks.filter(t => t.client?.toString() === c._id?.toString());
+      const pending = clientTasks.filter(t => t.status !== 'Done').length;
+      const overdue = clientTasks.filter(t => t.status === 'Overdue').length;
+      return `- ${c.companyName} | Stage: ${c.stage} | SLA: ${c.slaStatus} | Pending: ${pending} | Overdue: ${overdue}`;
+    }).join('\n');
+
+    const prompt = `You are an AI assistant for Elbow Grease Business Solutions.
+
+Generate a professional weekly performance report for the Manager based on this client data:
+
+TOTAL CLIENTS: ${clients.length}
+ACTIVE CLIENTS: ${clients.filter(c => c.stage !== 'Completed' && c.stage !== 'Final Closure').length}
+COMPLETED THIS WEEK: ${clients.filter(c => c.stage === 'Completed').length}
+SLA BREACHED: ${clients.filter(c => c.slaStatus === 'Breached').length}
+SLA AT RISK: ${clients.filter(c => c.slaStatus === 'At Risk').length}
+
+CLIENT DETAILS:
+${summary}
+
+Write a professional weekly report with:
+1. Executive Summary (2-3 sentences overview)
+2. Key Highlights (what went well)
+3. Issues & Risks (what needs attention)
+4. Action Items for next week
+
+Keep it concise and actionable. Use plain text — no markdown symbols like ** or ##.`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text().trim();
+  } catch (err) {
+    console.error('AI Weekly Report error:', err.message);
+    return null;
+  }
+};
+
+module.exports = { generateClientSummary, generateProfessionalNote, generateWeeklyReport };
+

@@ -293,4 +293,15 @@ router.post('/:id/ai-note', async (req, res) => {
   }
 });
 
+// GET — Trigger weekly report manually (HOD only)
+router.get('/weekly-report/send', async (req, res) => {
+  try {
+    const { sendWeeklyReport } = require('../utils/weeklyReport');
+    await sendWeeklyReport();
+    res.json({ message: '✅ Weekly report sent!' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed', error: err.message });
+  }
+});
+
 module.exports = router;
