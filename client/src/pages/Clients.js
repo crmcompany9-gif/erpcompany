@@ -9,12 +9,28 @@ function Clients() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
+ useEffect(() => {
+  const fetchClients = () => {
     API.get('/clients')
       .then(({ data }) => setClients(data))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  fetchClients();
+
+  // Auto refresh every 60 seconds
+  const interval = setInterval(fetchClients, 60 * 1000);
+
+  // Refresh when tab gets focus
+  const onFocus = () => fetchClients();
+  document.addEventListener('visibilitychange', onFocus);
+
+  return () => {
+    clearInterval(interval);
+    document.removeEventListener('visibilitychange', onFocus);
+  };
+}, []);
 
   const stageBadge = (stage) => {
     const map = { 'Onboarding':'badge-blue','Content Collection':'badge-gold','Pitch Deck':'badge-gold','Submitted':'badge-green','Grooming':'badge-gray','Done':'badge-green','Rejected':'badge-red' };

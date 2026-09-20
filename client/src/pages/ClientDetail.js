@@ -133,7 +133,23 @@ const [aiNoteLoading, setAiNoteLoading] = useState(false);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchAll(); }, [id]);
+useEffect(() => {
+  fetchAll();
+
+  // Auto refresh every 30 seconds on detail page
+  const interval = setInterval(fetchAll, 30 * 1000);
+
+  // Refresh when tab gets focus
+  const onFocus = () => {
+    if (!document.hidden) fetchAll();
+  };
+  document.addEventListener('visibilitychange', onFocus);
+
+  return () => {
+    clearInterval(interval);
+    document.removeEventListener('visibilitychange', onFocus);
+  };
+}, [id]);
 
   const moveToStage = async (targetStage, successMsg) => {
     if (!note.trim()) return toast.error('Please add a note first');

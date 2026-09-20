@@ -59,32 +59,36 @@ const [presence, setPresence] = useState([]);
   const isHOD = role === 'hod' || role === 'manager' || role === 'poc';
 
   useEffect(() => {
-    // Fetch clients
-    API.get('/clients')
-      .then(({ data }) => setClients(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const fetchAll = () => {
+      API.get('/clients')
+        .then(({ data }) => setClients(data))
+        .catch(console.error)
+        .finally(() => setLoading(false));
 
-    // Fetch risks
-    API.get('/clients/risks/latest')
-      .then(({ data }) => setRisks(data.risks || []))
-      .catch(() => {});
-
-    // Fetch presence (HOD only)
-    if (isHOD) {
-      API.get('/employees/presence')
-        .then(({ data }) => setPresence(data))
+      API.get('/clients/risks/latest')
+        .then(({ data }) => setRisks(data.risks || []))
         .catch(() => {});
 
-      // Refresh presence every 2 minutes
-      const presenceInterval = setInterval(() => {
+      if (isHOD) {
         API.get('/employees/presence')
           .then(({ data }) => setPresence(data))
           .catch(() => {});
-      }, 2 * 60 * 1000);
+      }
+    };
 
-      return () => clearInterval(presenceInterval);
-    }
+    fetchAll(); // Run on load
+
+    // Auto refresh every 60 seconds
+    const interval = setInterval(fetchAll, 60 * 1000);
+
+    // Refresh when tab gets focus
+    const onFocus = () => fetchAll();
+    document.addEventListener('visibilitychange', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
   }, []);
 
   // Filter clients based on role
