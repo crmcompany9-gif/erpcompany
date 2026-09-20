@@ -68,9 +68,16 @@ router.post('/login', async (req, res) => {
 );
 
 // Record login time
+const now = new Date();
+const existingUser = await User.findById(user._id);
+
+// Only reset loginAt if it's a new day or first login
+const isNewDay = !existingUser.loginAt || 
+  new Date(existingUser.loginAt).toDateString() !== now.toDateString();
+
 await User.findByIdAndUpdate(user._id, {
-  lastSeen: new Date(),
-  loginAt: new Date(),
+  lastSeen: now,
+  loginAt: isNewDay ? now : existingUser.loginAt,
   isOnline: true,
 });
 
