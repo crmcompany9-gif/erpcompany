@@ -114,6 +114,7 @@ function ClientDetail() {
   const myAllowedStages = ROLE_STAGES[user.role] || ALL_STAGES;
   const [aiSummary, setAiSummary] = useState('');
 const [aiLoading, setAiLoading] = useState(false);
+const [aiNoteLoading, setAiNoteLoading] = useState(false);
 
   const fetchAll = async () => {
     try {
@@ -224,6 +225,25 @@ const [aiLoading, setAiLoading] = useState(false);
     toast.error('AI summary failed — check API key');
   } finally {
     setAiLoading(false);
+  }
+};
+
+const handleAINote = async () => {
+  if (!note.trim()) return toast.error('Type a rough note first!');
+  setAiNoteLoading(true);
+  try {
+    const res = await API.post(`/clients/${id}/ai-note`, {
+      roughNote: note,
+      stage: client.stage,
+      department: dept,
+      companyName: client.companyName,
+    });
+    setNote(res.data.note);
+    toast.success('✨ Note improved by AI!');
+  } catch {
+    toast.error('AI note failed');
+  } finally {
+    setAiNoteLoading(false);
   }
 };
 
@@ -485,17 +505,31 @@ const [aiLoading, setAiLoading] = useState(false);
 
                 {!showFirstInterviewButtons && !showSecondInterviewButtons && (
                   <React.Fragment>
-                    <div className="form-group">
-                      <label>Current Work Stage</label>
-                      <select value={selectedStage} onChange={e => setSelectedStage(e.target.value)}>
-                        {myAllowedStages.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                      <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4 }}>ℹ️ Select the stage YOU JUST COMPLETED — next stage activates automatically</div>
-                    </div>
-                    <div className="form-group">
-                      <label>Note *</label>
-                      <textarea placeholder="What did you do for this client today?" value={note} onChange={e => setNote(e.target.value)} />
-                    </div>
+                  <div className="form-group">
+  <label>Note *</label>
+  <textarea
+    placeholder="Type rough notes e.g: mou sent, payment received..."
+    value={note}
+    onChange={e => setNote(e.target.value)}
+  />
+  <button
+    type="button"
+    onClick={handleAINote}
+    disabled={aiNoteLoading}
+    style={{
+      marginTop:6, width:'100%',
+      padding:'7px',
+      background: aiNoteLoading ? 'var(--surface)' : 'linear-gradient(135deg,#7C3AED,#6D28D9)',
+      color: aiNoteLoading ? 'var(--muted)' : '#fff',
+      border:'none', borderRadius:6,
+      fontSize:12, fontWeight:600,
+      cursor: aiNoteLoading ? 'not-allowed' : 'pointer',
+      fontFamily:'inherit',
+    }}
+  >
+    {aiNoteLoading ? '⏳ Improving...' : '✨ Improve with AI'}
+  </button>
+</div>
                   </React.Fragment>
                 )}
 
