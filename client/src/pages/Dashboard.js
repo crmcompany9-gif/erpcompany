@@ -196,19 +196,33 @@ const [presence, setPresence] = useState([]);
           }}>
             {emp.name?.charAt(0).toUpperCase()}
           </div>
-          {/* Info */}
-          <div style={{flex:1,minWidth:0}}>
-            <div style={{fontSize:13,fontWeight:600,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-              {emp.name}
-            </div>
-            <div style={{fontSize:11,color:emp.color,fontWeight:500}}>
-              {emp.statusLabel}
-            </div>
-            {emp.loginAt && (
-              <div style={{fontSize:10,color:'var(--light)'}}>
-                Login: {new Date(emp.loginAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}
-              </div>
-            )}
+         {/* Info */}
+<div style={{flex:1,minWidth:0}}>
+  <div style={{fontSize:13,fontWeight:600,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+    {emp.name}
+  </div>
+  <div style={{fontSize:11,color:emp.color,fontWeight:500}}>
+    {emp.status === 'online' ? '🟢 Online now' :
+     emp.status === 'away' ? '🟡 ' + emp.statusLabel :
+     emp.status === 'offline' ? '🔴 ' + emp.statusLabel :
+     '⚫ Not logged in today'}
+  </div>
+  {emp.loginAt && (
+    <div style={{fontSize:10,color:'var(--muted)',marginTop:2}}>
+      🕐 Login: {new Date(emp.loginAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}
+    </div>
+  )}
+  {emp.lastSeen && emp.status !== 'online' && (
+    <div style={{fontSize:10,color:'var(--muted)',marginTop:1}}>
+      👁 Last seen: {new Date(emp.lastSeen).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}
+    </div>
+  )}
+  {!emp.loginAt && (
+    <div style={{fontSize:10,color:'var(--light)',marginTop:2}}>
+      No activity today
+    </div>
+  )}
+</div>
           </div>
           {/* Department badge */}
           <div style={{
