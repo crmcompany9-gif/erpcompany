@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const dns = require("node:dns");
 const { runRiskDetection } = require('./utils/riskDetector');
+const User = require('./models/User');
 
 dns.setServers([
   "8.8.8.8",
@@ -110,6 +111,20 @@ mongoose
   .catch((err) => {
     console.log('❌ MongoDB connection error:', err.message);
   });
+
+  // Auto mark offline — runs every 5 minutes
+setInterval(async () => {
+  try {
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    await User.updateMany(
+      { isOnline: true, lastSeen: { $lt: tenMinutesAgo } },
+      { isOnline: false }
+    );
+  } catch (err) {
+    console.error('Auto offline error:', err.message);
+  }
+}, 5 * 60 * 1000);
+console.log('👁 Employee presence tracking active');
 
   // Run risk detection every day at 8am
 const scheduleRiskDetection = () => {

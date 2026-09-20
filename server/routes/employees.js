@@ -119,5 +119,65 @@ router.get('/check-client-login/:clientId', async (req, res) => {
   }
 });
 
+// GET — Employee presence for Manager
+router.get('/presence', async (req, res) => {
+  try {
+    const employees = await User.find({
+      role: { $ne: 'client' },
+      isActive: true,
+    }).select('name role department isOnline lastSeen loginAt');
+
+    const presence = employees.map(emp => {
+      const lastSeen = emp.lastSeen ? new Date(emp.lastSeen) : null;
+      const minutesAgo = lastSeen
+        ? Math.floor((new Date() - lastSeen) / (1000 * 60))
+        : null;
+
+      let status = 'never';
+      let statusLabel = 'Not logged in';
+      let color = '#94A3B8';
+
+      if (lastSeen) {
+        if (minutesAgo < 8) {
+          status = 'online';
+          statusLabel = 'Online now';
+          color = '#10B981';
+        } else if (minutesAgo < 30) {
+          status = 'away';
+          statusLabel = `Away — ${minutesAgo} mins ago`;
+          color = '#F59E0B';
+        } else {
+          status = 'offline';
+          const hours = Math.floor(minutesAgo / 60);
+          const mins = minutesAgo % 60;
+          statusLabel = hours > 0
+            ? `Offline — ${hours}h ${mins}m ago`
+            : `Offline — ${minutesAgo} mins ago`;
+          color = '#EF4444';
+        }
+      }
+
+      return {
+        name: emp.name,
+        role: emp.role,
+        department: emp.department,
+        status,
+        statusLabel,
+        color,
+        loginAt: emp.loginAt,
+        lastSeen: emp.lastSeen,
+      };
+    });
+
+    // Sort: online first, then away, then offline
+    const order = { online: 0, away: 1, offline: 2, never: 3 };
+    presence.sort((a, b) => order[a.status] - order[b.status]);
+
+    res.json(presence);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
 
 module.exports = router;

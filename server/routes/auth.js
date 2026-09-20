@@ -67,6 +67,13 @@ router.post('/login', async (req, res) => {
   { expiresIn: '8h' }
 );
 
+// Record login time
+await User.findByIdAndUpdate(user._id, {
+  lastSeen: new Date(),
+  loginAt: new Date(),
+  isOnline: true,
+});
+
     res.json({
       message: '✅ Login successful',
       token,
@@ -158,6 +165,46 @@ router.get('/client-portal', async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Heartbeat — called every 5 mins from frontend
+router.post('/heartbeat', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'No token' });
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    await User.findByIdAndUpdate(decoded.id, {
+      lastSeen: new Date(),
+      isOnline: true,
+    });
+
+    res.json({ ok: true });
+  } catch {
+    res.status(401).json({ message: 'Invalid token' });
+  }
+});
+
+// Logout — record logout time
+router.post('/logout', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.json({ ok: true });
+
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    await User.findByIdAndUpdate(decoded.id, {
+      isOnline: false,
+      lastSeen: new Date(),
+    });
+
+    res.json({ ok: true });
+  } catch {
+    res.json({ ok: true });
   }
 });
 

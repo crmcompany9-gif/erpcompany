@@ -52,6 +52,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [risks, setRisks] = useState([]);
 const [risksLoading, setRisksLoading] = useState(false);
+const [presence, setPresence] = useState([]);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = user.role || 'kam';
@@ -67,6 +68,21 @@ const [risksLoading, setRisksLoading] = useState(false);
 API.get('/clients/risks/latest')
   .then(({ data }) => setRisks(data.risks || []))
   .catch(() => {});
+
+  if (isHOD) {
+  API.get('/employees/presence')
+    .then(({ data }) => setPresence(data))
+    .catch(() => {});
+
+  // Refresh presence every 2 minutes
+  const presenceInterval = setInterval(() => {
+    API.get('/employees/presence')
+      .then(({ data }) => setPresence(data))
+      .catch(() => {});
+  }, 2 * 60 * 1000);
+
+  return () => clearInterval(presenceInterval);
+}
 
   // Filter clients based on role
   const myStages = ROLE_STAGES[role];
@@ -139,6 +155,86 @@ API.get('/clients/risks/latest')
           </div>
         </div>
       </div>
+
+      {/* Employee Presence */}
+{isHOD && presence.length > 0 && (
+  <div className="card" style={{marginBottom:16}}>
+    <div className="card-title">
+      👥 Team Presence — Live
+      <span style={{fontSize:11,color:'var(--muted)',fontWeight:400}}>
+        Auto-refreshes every 2 mins
+      </span>
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:8}}>
+      {presence.map((emp, i) => (
+        <div key={i} style={{
+          display:'flex',alignItems:'center',gap:10,
+          padding:'10px 12px',
+          background:'var(--surface)',
+          borderRadius:8,
+          border:'1px solid var(--border)',
+        }}>
+          {/* Status dot */}
+          <div style={{
+            width:10,height:10,borderRadius:'50%',
+            background:emp.color,flexShrink:0,
+            boxShadow: emp.status==='online' ? `0 0 0 3px ${emp.color}33` : 'none',
+          }}/>
+          {/* Avatar */}
+          <div style={{
+            width:32,height:32,borderRadius:'50%',
+            background: emp.status==='online' ? 'var(--blue)' : 'var(--lighter)',
+            display:'flex',alignItems:'center',justifyContent:'center',
+            color:'#fff',fontWeight:700,fontSize:11,flexShrink:0,
+          }}>
+            {emp.name?.charAt(0).toUpperCase()}
+          </div>
+          {/* Info */}
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--text)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+              {emp.name}
+            </div>
+            <div style={{fontSize:11,color:emp.color,fontWeight:500}}>
+              {emp.statusLabel}
+            </div>
+            {emp.loginAt && (
+              <div style={{fontSize:10,color:'var(--light)'}}>
+                Login: {new Date(emp.loginAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})}
+              </div>
+            )}
+          </div>
+          {/* Department badge */}
+          <div style={{
+            fontSize:10,fontWeight:600,
+            color:'var(--muted)',
+            background:'var(--white)',
+            padding:'2px 6px',borderRadius:4,
+            border:'1px solid var(--border)',
+            whiteSpace:'nowrap',
+          }}>
+            {emp.department}
+          </div>
+        </div>
+      ))}
+    </div>
+    {/* Summary */}
+    <div style={{
+      display:'flex',gap:16,marginTop:12,
+      paddingTop:12,borderTop:'1px solid var(--border)',
+    }}>
+      {[
+        {label:'🟢 Online', count:presence.filter(p=>p.status==='online').length, color:'var(--green)'},
+        {label:'🟡 Away', count:presence.filter(p=>p.status==='away').length, color:'var(--gold)'},
+        {label:'🔴 Offline', count:presence.filter(p=>p.status==='offline').length, color:'var(--red)'},
+        {label:'⚫ Not logged in', count:presence.filter(p=>p.status==='never').length, color:'var(--light)'},
+      ].map(s => (
+        <div key={s.label} style={{fontSize:12,color:s.color,fontWeight:600}}>
+          {s.label}: {s.count}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       {/* AI Risk Alerts */}
 {risks.length > 0 && (

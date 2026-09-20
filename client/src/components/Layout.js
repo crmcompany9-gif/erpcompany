@@ -4,14 +4,14 @@ import API from '../api/axios';
 
 function Layout() {
   const navigate = useNavigate();
- const user = JSON.parse(localStorage.getItem('user') || '{}');
-const isHOD = user.role === 'hod' || user.role === 'manager';
-const canAddClient = ['kam','accounts','hod','manager'].includes(user.role);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isHOD = user.role === 'hod' || user.role === 'manager';
+  const canAddClient = ['kam', 'accounts', 'hod', 'manager'].includes(user.role);
 
-const [taskCounts, setTaskCounts] = useState({ pending: 0, overdue: 0 });
-const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [taskCounts, setTaskCounts] = useState({ pending: 0, overdue: 0 });
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-useEffect(() => {
+  useEffect(() => {
     const fetchCounts = () => {
       API.get('/tasks/counts/pending')
         .then(({ data }) => setTaskCounts(data))
@@ -22,11 +22,25 @@ useEffect(() => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
+  useEffect(() => {
+  // Heartbeat — every 5 minutes
+  const sendHeartbeat = () => {
+    API.post('/auth/heartbeat').catch(() => {});
   };
+
+  sendHeartbeat(); // Send immediately on load
+  const heartbeat = setInterval(sendHeartbeat, 5 * 60 * 1000);
+  return () => clearInterval(heartbeat);
+}, []);
+
+ const handleLogout = async () => {
+  try {
+    await API.post('/auth/logout');
+  } catch {}
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  navigate('/login');
+};
 
   const initials = user.name
     ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
@@ -43,7 +57,7 @@ useEffect(() => {
     };
     return map[role] || role;
   };
-  
+
   if (user.role === 'client') return <Navigate to="/my-portal" />;
 
   return (

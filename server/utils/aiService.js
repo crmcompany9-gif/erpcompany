@@ -151,7 +151,7 @@ const detectClientRisks = async (clients, tasks) => {
 Analyze these client files and identify which ones are at risk. 
 
 For each client, consider:
-- Days since last update (3+ days = concerning, 7+ days = high risk)
+- Days since last update (0+ days = concerning, 1+ days = high risk)
 - Overdue tasks (3+ = concerning, 5+ = high risk)
 - SLA status (At Risk or Breached = concerning)
 - Rejection path clients need more attention
