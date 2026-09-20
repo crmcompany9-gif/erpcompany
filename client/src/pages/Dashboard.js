@@ -223,7 +223,6 @@ const [presence, setPresence] = useState([]);
     </div>
   )}
 </div>
-          </div>
           {/* Department badge */}
           <div style={{
             fontSize:10,fontWeight:600,
