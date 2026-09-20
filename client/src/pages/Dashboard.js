@@ -50,6 +50,8 @@ const ROLE_FOCUS = {
 function Dashboard() {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [risks, setRisks] = useState([]);
+const [risksLoading, setRisksLoading] = useState(false);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const role = user.role || 'kam';
@@ -61,6 +63,10 @@ function Dashboard() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+  // Fetch risks
+API.get('/clients/risks/latest')
+  .then(({ data }) => setRisks(data.risks || []))
+  .catch(() => {});
 
   // Filter clients based on role
   const myStages = ROLE_STAGES[role];
@@ -133,6 +139,56 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* AI Risk Alerts */}
+{risks.length > 0 && (
+  <div className="card" style={{borderLeft:'4px solid var(--red)',marginBottom:16}}>
+    <div className="card-title" style={{color:'var(--red)'}}>
+      🚨 AI Risk Alerts ({risks.length} clients need attention)
+      <button
+        className="btn btn-sm btn-outline"
+        style={{fontSize:11}}
+        onClick={() => {
+          setRisksLoading(true);
+          API.get('/clients/risks/run')
+            .then(({ data }) => setRisks(data.risks || []))
+            .finally(() => setRisksLoading(false));
+        }}
+      >
+        {risksLoading ? '⏳' : '🔄 Refresh'}
+      </button>
+    </div>
+    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+      {risks.map((risk, i) => (
+        <div key={i} style={{
+          padding:'12px 14px',
+          background: risk.risk === 'HIGH' ? 'var(--red-light)' : 'var(--gold-light)',
+          border: `1px solid ${risk.risk === 'HIGH' ? '#FECACA' : '#FDE68A'}`,
+          borderRadius:8,
+        }}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+            <span style={{fontSize:13,fontWeight:700,color:'var(--text)'}}>
+              {risk.company}
+            </span>
+            <span style={{
+              fontSize:10,fontWeight:700,padding:'2px 8px',borderRadius:20,
+              background: risk.risk === 'HIGH' ? '#FEE2E2' : '#FEF3C7',
+              color: risk.risk === 'HIGH' ? '#DC2626' : '#D97706',
+            }}>
+              {risk.risk === 'HIGH' ? '🔴 HIGH RISK' : '🟡 MEDIUM RISK'}
+            </span>
+          </div>
+          <div style={{fontSize:12,color:'var(--muted)',marginBottom:4}}>
+            ⚠️ {risk.reason}
+          </div>
+          <div style={{fontSize:12,color:'var(--blue)',fontWeight:600}}>
+            → {risk.action}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       {/* Pipeline — HOD sees full pipeline, others see their stage highlighted */}
       <div className="card">
