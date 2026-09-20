@@ -70,7 +70,7 @@ const allowedOrigins = [
   'https://erpportal-lqux.onrender.com',
 ];
 
-app.options('*', cors());
+app.options('(.*)', cors());
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
