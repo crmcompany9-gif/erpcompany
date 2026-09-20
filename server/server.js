@@ -62,11 +62,10 @@ app.use('/api/auth/login', loginLimiter);
 
 // Middleware
 const allowedOrigins = [
-  'http://localhost:3000',
-  'https://erpportal-lqux.onrender.com',
+  'http://localhost:3000', 
   'https://erpcompany.onrender.com',
+  'https://erpportal-lqux.onrender.com',
 ];
-
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
