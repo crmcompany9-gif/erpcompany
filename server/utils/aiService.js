@@ -48,4 +48,32 @@ Write a concise, professional summary in 3-4 sentences. Mention the current stag
   }
 };
 
-module.exports = { generateClientSummary };
+const generateProfessionalNote = async (roughNote, stage, department, companyName) => {
+  try {
+    const prompt = `You are helping an employee of Elbow Grease Business Solutions write a professional client update note.
+
+The employee works in the ${department} department and is updating a client at the ${stage} stage.
+Client company: ${companyName}
+
+Employee's rough note: "${roughNote}"
+
+Rewrite this as a clear, professional 2-3 sentence note that:
+- Explains exactly what was done
+- Is formal but simple
+- Mentions the client or relevant details
+- Does not use bullet points
+- Is suitable for a business CRM system
+
+Write only the note — no extra text, no labels, no quotes.`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text().trim();
+  } catch (err) {
+    console.error('AI Note error:', err.message);
+    return null;
+  }
+};
+
+module.exports = { generateClientSummary, generateProfessionalNote };

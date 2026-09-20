@@ -5,7 +5,7 @@ const Task = require('../models/Task');
 const { getSLADeadline, getSLAStatus } = require('../utils/slaHelper');
 const { generateTasksForStage } = require('../utils/taskGenerator');
 const { sendEmail, emailTemplates } = require('../utils/emailService');
-const { generateClientSummary } = require('../utils/aiService');
+const { generateClientSummary, generateProfessionalNote } = require('../utils/aiService');
 
 // GET all clients
 router.get('/', async (req, res) => {
@@ -273,6 +273,21 @@ router.post('/:id/ai-summary', async (req, res) => {
     if (!summary) return res.status(500).json({ message: 'AI summary failed' });
 
     res.json({ summary });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// POST — AI Note Writer
+router.post('/:id/ai-note', async (req, res) => {
+  try {
+    const { roughNote, stage, department, companyName } = req.body;
+    if (!roughNote) return res.status(400).json({ message: 'Note is required' });
+
+    const note = await generateProfessionalNote(roughNote, stage, department, companyName);
+    if (!note) return res.status(500).json({ message: 'AI note generation failed' });
+
+    res.json({ note });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
