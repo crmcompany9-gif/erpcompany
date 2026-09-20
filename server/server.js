@@ -45,27 +45,32 @@ app.use((req, res, next) => {
 });
 
 // Rate limit — max 100 requests per 15 mins per IP
+// Rate limit — max 500 requests per 15 mins per IP
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { message: '❌ Too many requests. Try again in 15 minutes.' }
+  max: 500,
+  message: { message: '❌ Too many requests. Try again in 15 minutes.' },
+  skip: (req) => req.path === '/',
 });
 app.use(globalLimiter);
 
-// Login rate limit — max 10 attempts per 15 mins per IP
+// Login rate limit — max 20 attempts per 15 mins per IP
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 20,
   message: { message: '❌ Too many login attempts. Try again in 15 minutes.' }
 });
 app.use('/api/auth/login', loginLimiter);
 
 // Middleware
+
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://erpcompany.onrender.com',
   'https://erpportal-lqux.onrender.com',
 ];
+
+app.options('*', cors());
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {

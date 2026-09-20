@@ -79,7 +79,7 @@ const [presence, setPresence] = useState([]);
     fetchAll(); // Run on load
 
     // Auto refresh every 60 seconds
-    const interval = setInterval(fetchAll, 60 * 1000);
+   const interval = setInterval(fetchAll, 2 * 60 * 1000); // 2 mins
 
     // Refresh when tab gets focus
     const onFocus = () => fetchAll();

@@ -20,7 +20,7 @@ function Clients() {
   fetchClients();
 
   // Auto refresh every 60 seconds
-  const interval = setInterval(fetchClients, 60 * 1000);
+ const interval = setInterval(fetchClients, 2 * 60 * 1000); // 2 mins
 
   // Refresh when tab gets focus
   const onFocus = () => fetchClients();

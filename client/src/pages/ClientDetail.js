@@ -137,7 +137,7 @@ useEffect(() => {
   fetchAll();
 
   // Auto refresh every 30 seconds on detail page
-  const interval = setInterval(fetchAll, 30 * 1000);
+const interval = setInterval(fetchAll, 60 * 1000); // 1 min
 
   // Refresh when tab gets focus
   const onFocus = () => {
