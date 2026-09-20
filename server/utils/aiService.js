@@ -116,5 +116,80 @@ Keep it concise and actionable. Use plain text — no markdown symbols like ** o
   }
 };
 
-module.exports = { generateClientSummary, generateProfessionalNote, generateWeeklyReport };
+const detectClientRisks = async (clients, tasks) => {
+  try {
+    const clientRiskData = clients.map(c => {
+      const clientTasks = tasks.filter(t => t.client?.toString() === c._id?.toString());
+      const overdueTasks = clientTasks.filter(t => t.status === 'Overdue');
+      const pendingTasks = clientTasks.filter(t => t.status === 'Pending');
+      const lastUpdate = c.updates?.length > 0
+        ? new Date(c.updates[c.updates.length - 1].createdAt)
+        : new Date(c.createdAt);
+      const daysSinceUpdate = Math.floor((new Date() - lastUpdate) / (1000 * 60 * 60 * 24));
+      const lastComm = c.communications?.length > 0
+        ? new Date(c.communications[c.communications.length - 1].createdAt)
+        : null;
+      const daysSinceComm = lastComm
+        ? Math.floor((new Date() - lastComm) / (1000 * 60 * 60 * 24))
+        : 999;
+
+      return {
+        id: c._id,
+        company: c.companyName,
+        stage: c.stage,
+        slaStatus: c.slaStatus,
+        overdueTasks: overdueTasks.length,
+        pendingTasks: pendingTasks.length,
+        daysSinceUpdate,
+        daysSinceComm,
+        isRejectionPath: ['Rejected - Revision','PPT Revision','Resubmission','Re-Grooming','Retention','Final Closure'].includes(c.stage),
+      };
+    });
+
+    const prompt = `You are an AI risk analyst for Elbow Grease Business Solutions.
+
+Analyze these client files and identify which ones are at risk. 
+
+For each client, consider:
+- Days since last update (3+ days = concerning, 7+ days = high risk)
+- Overdue tasks (3+ = concerning, 5+ = high risk)
+- SLA status (At Risk or Breached = concerning)
+- Rejection path clients need more attention
+
+CLIENT DATA:
+${clientRiskData.map(c => 
+  `Company: ${c.company} | Stage: ${c.stage} | SLA: ${c.slaStatus} | Overdue Tasks: ${c.overdueTasks} | Days Since Update: ${c.daysSinceUpdate} | Days Since Client Contact: ${c.daysSinceComm === 999 ? 'Never' : c.daysSinceComm} | On Rejection Path: ${c.isRejectionPath}`
+).join('\n')}
+
+For each HIGH or MEDIUM risk client, provide a JSON array like this:
+[
+  {
+    "company": "Company Name",
+    "risk": "HIGH" or "MEDIUM",
+    "reason": "One clear sentence explaining why this client is at risk",
+    "action": "One specific action the manager should take immediately"
+  }
+]
+
+Only include clients that are genuinely at risk. If all clients are fine, return empty array [].
+Return ONLY the JSON array — no other text.`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text().trim();
+
+    // Parse JSON from response
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) return [];
+    return JSON.parse(jsonMatch[0]);
+
+  } catch (err) {
+    console.error('AI Risk Detector error:', err.message);
+    return [];
+  }
+};
+
+module.exports = { generateClientSummary, generateProfessionalNote, generateWeeklyReport, detectClientRisks };
+
 
