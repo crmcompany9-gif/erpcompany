@@ -14,6 +14,18 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  lastSeen: {
+  type: Date,
+  default: null,
+},
+loginAt: {
+  type: Date,
+  default: null,
+},
+isOnline: {
+  type: Boolean,
+  default: false,
+},
  role: {
   type: String,
 enum: ['hod','manager','accounts','kam','certification','retention','poc','content','grooming','it','legal','client'],
