@@ -293,7 +293,28 @@ router.post('/:id/ai-note', async (req, res) => {
   }
 });
 
-// GET — Trigger weekly report manually (HOD only)
+// GET — Latest risks
+router.get('/risks/latest', async (req, res) => {
+  try {
+    const { getLatestRisks } = require('../utils/riskDetector');
+    res.json(getLatestRisks());
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET — Trigger risk detection manually
+router.get('/risks/run', async (req, res) => {
+  try {
+    const { runRiskDetection, getLatestRisks } = require('../utils/riskDetector');
+    await runRiskDetection();
+    res.json(getLatestRisks());
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET — Trigger weekly report manually
 router.get('/weekly-report/send', async (req, res) => {
   try {
     const { sendWeeklyReport } = require('../utils/weeklyReport');
@@ -303,5 +324,4 @@ router.get('/weekly-report/send', async (req, res) => {
     res.status(500).json({ message: 'Failed', error: err.message });
   }
 });
-
 module.exports = router;

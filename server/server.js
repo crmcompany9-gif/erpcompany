@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const dns = require("node:dns");
+const { runRiskDetection } = require('./utils/riskDetector');
 
 dns.setServers([
   "8.8.8.8",
@@ -109,6 +110,23 @@ mongoose
   .catch((err) => {
     console.log('❌ MongoDB connection error:', err.message);
   });
+
+  // Run risk detection every day at 8am
+const scheduleRiskDetection = () => {
+  const msUntil8am = () => {
+    const now = new Date();
+    const next = new Date();
+    next.setHours(8, 0, 0, 0);
+    if (next <= now) next.setDate(next.getDate() + 1);
+    return next - now;
+  };
+  setTimeout(() => {
+    runRiskDetection();
+    setInterval(runRiskDetection, 24 * 60 * 60 * 1000);
+  }, msUntil8am());
+  console.log('🔍 AI Risk Detector scheduled for every day at 8am');
+};
+scheduleRiskDetection();
 
   // Keep alive — prevents Render free tier from sleeping
 const https = require('https');
