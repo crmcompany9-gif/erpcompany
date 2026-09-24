@@ -81,18 +81,19 @@ router.put('/:id/stage', async (req, res) => {
   try {
     const { stage, note, updatedBy, department, updatedByName, userRole } = req.body;
 
-     const roleStages = {
-  accounts:     ['Accounts & MOU'],
-  certification:['Certification', 'Completed'],
-      content:      ['Content & PPT', 'PPT Revision'],
-      kam:          ['File Submission'],
-      poc:          ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
-      retention:    ['Re-Grooming', 'Final Closure'],
+    const roleStages = {
+      accounts:      ['Accounts & MOU'],
+      certification: ['Certification', 'Completed'],
+      content:       ['Content & PPT', 'PPT Revision'],
+      kam:           ['File Submission'],
+      poc:           ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
+      retention:     ['Re-Grooming', 'Final Closure'],
     };
 
     const client = await Client.findById(req.params.id);
     if (!client) return res.status(404).json({ message: 'Client not found' });
 
+    // Department restriction
     const interviewStages = ['Interview', 'Retention', 'Grooming'];
     if (userRole && roleStages[userRole] && !interviewStages.includes(client.stage)) {
       const allowed = roleStages[userRole];
@@ -104,63 +105,55 @@ router.put('/:id/stage', async (req, res) => {
     }
 
     const prevStage = client.stage;
-    client.stage = stage;
 
-    // Determine next stage based on scheme type
-const getNextStage = (currentStage, schemeType) => {
-  if (schemeType === 'startup-india') {
-    const startupStages = ['Accounts & MOU', 'Certification', 'Completed'];
-    const idx = startupStages.indexOf(currentStage);
-    return idx < startupStages.length - 1 ? startupStages[idx + 1] : currentStage;
-  }
-  // Default full pipeline
-  const fullStages = [
-    'Accounts & MOU', 'Certification', 'Content & PPT',
-    'File Submission', 'Grooming', 'Interview', 'Completed',
-    'Rejected - Revision', 'PPT Revision', 'Resubmission',
-    'Re-Grooming', 'Retention', 'Final Closure',
-  ];
-  const idx = fullStages.indexOf(currentStage);
-  return idx < fullStages.length - 1 ? fullStages[idx + 1] : currentStage;
-};
+    // Decide the final stage (Startup India skips straight to Completed after Certification)
+    let newStage = stage || prevStage;
+    if (client.schemeType === 'startup-india') {
+      const startupStages = ['Accounts & MOU', 'Certification', 'Completed'];
+      if (prevStage === 'Certification' && newStage !== 'Certification') {
+        newStage = 'Completed';
+      } else if (!startupStages.includes(newStage)) {
+        newStage = 'Completed';
+      }
+    }
 
-    client.stageStartedAt = new Date();
-   client.slaDeadline = getSLADeadline(newStage);
-    client.slaStatus = getSLAStatus(client.slaDeadline);
+    client.stage = newStage;
+
+    if (prevStage !== newStage) {
+      client.stageStartedAt = new Date();
+      client.slaDeadline = getSLADeadline(newStage);
+      client.slaStatus = getSLAStatus(client.slaDeadline);
+    }
 
     client.updates.push({
       updatedBy,
       updatedByName,
       department,
       note,
-      stageChanged: prevStage !== stage ? `${prevStage} → ${stage}` : null,
+      stageChanged: prevStage !== newStage ? `${prevStage} → ${newStage}` : null,
       createdAt: new Date(),
     });
 
     await client.save();
 
-    await client.save();
+    // Emails + tasks only when the stage actually changed
+    if (prevStage !== newStage) {
+      if (newStage === 'File Submission') {
+        sendEmail(client.email, emailTemplates.fileSubmitted(client));
+      } else if (newStage === 'Completed') {
+        sendEmail(client.email, emailTemplates.interviewReceived(client));
+      } else if (newStage === 'Rejected - Revision') {
+        sendEmail(client.email, emailTemplates.interviewRejected(client));
+      } else if (newStage === 'Final Closure') {
+        sendEmail(client.email, emailTemplates.finalClosure(client));
+      }
 
-// Send emails based on stage
-if (prevStage !== stage) {
-  if (stage === 'File Submission') {
-    sendEmail(client.email, emailTemplates.fileSubmitted(client));
-  } else if (stage === 'Completed') {
-    sendEmail(client.email, emailTemplates.interviewReceived(client));
-  } else if (stage === 'Rejected - Revision') {
-    sendEmail(client.email, emailTemplates.interviewRejected(client));
-  } else if (stage === 'Final Closure') {
-    sendEmail(client.email, emailTemplates.finalClosure(client));
-  }
-}
-
-   if (prevStage !== newStage) {
-  try {
-    await generateTasksForStage(client, newStage, updatedBy);
-  } catch (taskErr) {
-    console.error('Task gen error:', taskErr.message);
-  }
-}
+      try {
+        await generateTasksForStage(client, newStage, updatedBy);
+      } catch (taskErr) {
+        console.error('Task gen error:', taskErr.message);
+      }
+    }
 
     res.json({ message: '✅ Stage updated & new tasks created', client });
   } catch (err) {
