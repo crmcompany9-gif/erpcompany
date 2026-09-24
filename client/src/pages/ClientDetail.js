@@ -4,15 +4,26 @@ import toast from 'react-hot-toast';
 import API from '../api/axios';
 import ClientLoginForm from '../components/ClientLoginForm';
 
-const SUCCESS_STAGES = [
-  { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
-  { key: 'Certification', label: 'Certification', owner: 'Lovely' },
-  { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
-  { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
-  { key: 'Grooming', label: 'Grooming', owner: 'Rohit' },
-  { key: 'Interview', label: 'Interview Received 🎉', owner: 'Laxmi' },
-  { key: 'Completed', label: '✅ All Journey Closed', owner: '' },
-];
+const getSuccessStages = (schemeType) => {
+  if (schemeType === 'startup-india') {
+    return [
+      { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
+      { key: 'Certification', label: 'Certification', owner: 'Lovely' },
+      { key: 'Completed', label: '✅ Journey Closed', owner: '' },
+    ];
+  }
+  return [
+    { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
+    { key: 'Certification', label: 'Certification', owner: 'Lovely' },
+    { key: 'Content & PPT', label: 'Content & PPT', owner: 'Tanmay Pandey' },
+    { key: 'File Submission', label: 'File Submission', owner: 'Vinit' },
+    { key: 'Grooming', label: 'Grooming', owner: 'Rohit' },
+    { key: 'Interview', label: 'Interview Received 🎉', owner: 'Laxmi' },
+    { key: 'Completed', label: '✅ All Journey Closed', owner: '' },
+  ];
+};
+
+
 
 const REJECTION_STAGES = [
   { key: 'Accounts & MOU', label: 'Accounts & MOU', owner: 'Riya' },
@@ -115,6 +126,8 @@ function ClientDetail() {
   const [aiSummary, setAiSummary] = useState('');
 const [aiLoading, setAiLoading] = useState(false);
 const [aiNoteLoading, setAiNoteLoading] = useState(false);
+
+const SUCCESS_STAGES = getSuccessStages(client?.schemeType);
 
   const fetchAll = async () => {
     try {

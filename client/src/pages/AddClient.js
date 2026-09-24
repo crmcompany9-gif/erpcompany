@@ -27,8 +27,9 @@ function AddClient() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     companyName: '', contactPerson: '', phone: '', email: '',
-    gst: '', scheme: '', leadSource: 'Direct Enquiry', notes: '',
+    gst: '', scheme: '',schemeType: 'full', leadSource: 'Direct Enquiry', notes: '',
   });
+  
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleSubmit = async (e) => {
@@ -70,6 +71,15 @@ function AddClient() {
               <label>Contact Person *</label>
               <input name="contactPerson" placeholder="Full name" value={form.contactPerson} onChange={handleChange} required />
             </div>
+            <div className="form-group">
+  <label>Scheme *</label>
+  <input 
+    type="text"
+    placeholder="e.g. Nidhi Seed Support"
+    value={form.scheme}
+    onChange={e => setForm({...form, scheme: e.target.value})}
+  />
+</div>
           </div>
           <div className="form-row">
             <div className="form-group">
@@ -105,16 +115,23 @@ function AddClient() {
                 <option value="Women Entrepreneurship" />
               </datalist>
             </div>
-            <div className="form-group">
-              <label>Lead Source</label>
-              <select name="leadSource" value={form.leadSource} onChange={handleChange}>
-                <option>Direct Enquiry</option>
-                <option>Referral</option>
-                <option>WhatsApp</option>
-                <option>Website</option>
-                <option>Social Media</option>
-              </select>
-            </div>
+           <div className="form-group">
+  <label>Lead Source</label>
+  <select name="leadSource" value={form.leadSource} onChange={handleChange}>
+    <option>Direct Enquiry</option>
+    <option>Referral</option>
+    <option>WhatsApp</option>
+    <option>Website</option>
+    <option>Social Media</option>
+  </select>
+</div>
+<div className="form-group">
+  <label>Pipeline Type *</label>
+  <select name="schemeType" value={form.schemeType || 'full'} onChange={handleChange}>
+    <option value="full">Full Pipeline — Nidhi Seed, State Grant etc.</option>
+    <option value="startup-india">Startup India — Certification only</option>
+  </select>
+</div>
           </div>
           <div className="form-row">
             <div className="form-group">
