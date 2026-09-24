@@ -28,6 +28,12 @@ const ClientSchema = new mongoose.Schema({
     required: true,
   },
 
+  schemeType: {
+  type: String,
+  enum: ['full', 'startup-india'],
+  default: 'full',
+},
+
   // Current Stage in Pipeline
 stage: {
   type: String,

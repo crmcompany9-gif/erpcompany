@@ -81,9 +81,9 @@ router.put('/:id/stage', async (req, res) => {
   try {
     const { stage, note, updatedBy, department, updatedByName, userRole } = req.body;
 
-    const roleStages = {
-      accounts:     ['Accounts & MOU'],
-      certification:['Certification'],
+     const roleStages = {
+  accounts:     ['Accounts & MOU'],
+  certification:['Certification', 'Completed'],
       content:      ['Content & PPT', 'PPT Revision'],
       kam:          ['File Submission'],
       poc:          ['Grooming', 'Interview', 'Rejected - Revision', 'Re-Grooming', 'Resubmission', 'Retention'],
@@ -105,8 +105,27 @@ router.put('/:id/stage', async (req, res) => {
 
     const prevStage = client.stage;
     client.stage = stage;
+
+    // Determine next stage based on scheme type
+const getNextStage = (currentStage, schemeType) => {
+  if (schemeType === 'startup-india') {
+    const startupStages = ['Accounts & MOU', 'Certification', 'Completed'];
+    const idx = startupStages.indexOf(currentStage);
+    return idx < startupStages.length - 1 ? startupStages[idx + 1] : currentStage;
+  }
+  // Default full pipeline
+  const fullStages = [
+    'Accounts & MOU', 'Certification', 'Content & PPT',
+    'File Submission', 'Grooming', 'Interview', 'Completed',
+    'Rejected - Revision', 'PPT Revision', 'Resubmission',
+    'Re-Grooming', 'Retention', 'Final Closure',
+  ];
+  const idx = fullStages.indexOf(currentStage);
+  return idx < fullStages.length - 1 ? fullStages[idx + 1] : currentStage;
+};
+
     client.stageStartedAt = new Date();
-    client.slaDeadline = getSLADeadline(stage);
+   client.slaDeadline = getSLADeadline(newStage);
     client.slaStatus = getSLAStatus(client.slaDeadline);
 
     client.updates.push({
@@ -135,13 +154,13 @@ if (prevStage !== stage) {
   }
 }
 
-    if (prevStage !== stage) {
-      try {
-        await generateTasksForStage(client, stage, updatedBy);
-      } catch (taskErr) {
-        console.error('Task gen error:', taskErr.message);
-      }
-    }
+   if (prevStage !== newStage) {
+  try {
+    await generateTasksForStage(client, newStage, updatedBy);
+  } catch (taskErr) {
+    console.error('Task gen error:', taskErr.message);
+  }
+}
 
     res.json({ message: '✅ Stage updated & new tasks created', client });
   } catch (err) {
